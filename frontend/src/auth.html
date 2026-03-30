@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Spice & Soul</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f9f8f6;--bg2:#141109;--bg3:#1c1810;--bg4:#252018;
+  --border:rgba(181,137,42,0.18);--border2:rgba(181,137,42,0.35);
+  --text:#f5f0e8;--text2:#c8bfa8;--text3:#8a7f6a;
+  --gold:#b5892a;--gold2:#d4a843;--gold3:#e8c060;
+  --green:#2d6b3f;--red:#c0392b;
+  --shadow:0 24px 64px rgba(0,0,0,0.6);
+  --r12:12px;--r16:16px;--r22:22px;--r30:30px;--r50:50px;
+  --tr:all 0.26s cubic-bezier(0.4,0,0.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 30%,rgba(181,137,42,0.07) 0%,transparent 70%);pointer-events:none;}
+.dots{position:fixed;inset:0;background-image:radial-gradient(circle,rgba(181,137,42,0.1) 1px,transparent 1px);background-size:40px 40px;opacity:0.35;pointer-events:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideUp{from{transform:translateY(32px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+.auth-wrap{position:relative;z-index:2;width:100%;max-width:440px;padding:20px;}
+.auth-box{background:#f2efe9;border:1px solid var(--border);border-radius:var(--r30);padding:40px 36px;box-shadow:var(--shadow);animation:fadeUp 0.5s both;}
+.auth-logo{text-align:center;margin-bottom:32px;}
+.auth-logo a{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);text-decoration:none;letter-spacing:1px;}
+.auth-logo em{color:var(--gold2);font-style:italic;}
+.auth-logo p{font-size:9px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-top:4px;}
+.auth-tabs{display:flex;background:#c8bfa8;border:1px solid var(--border);border-radius:var(--r50);padding:4px;margin-bottom:28px;}
+.auth-tab{flex:1;background:none;border:none;border-radius:var(--r50);padding:9px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);transition:var(--tr);font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+.auth-tab.active{background:var(--gold);color:#000;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:8px;}
+.field input{width:100%;background:#c8bfa8;border:1.5px solid var(--border);border-radius:var(--r12);padding:13px 16px;color:var(--text);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:var(--tr);}
+.field input:focus{border-color:var(--gold2);background:var(--bg4);}
+.field input::placeholder{color:var(--text3);}
+.auth-btn{width:100%;background:var(--gold);border:none;border-radius:var(--r16);padding:15px;color:#000;font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-top:8px;transition:var(--tr);font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+.auth-btn:hover{background:var(--gold2);transform:translateY(-1px);}
+.auth-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.auth-err{background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.3);border-radius:var(--r12);padding:12px 16px;font-size:12px;color:#e88;margin-bottom:16px;display:none;}
+.auth-err.show{display:block;}
+.auth-ok{background:rgba(45,107,63,0.12);border:1px solid rgba(45,107,63,0.3);border-radius:var(--r12);padding:12px 16px;font-size:12px;color:#8e8;margin-bottom:16px;display:none;}
+.auth-ok.show{display:block;}
+.auth-divider{text-align:center;color:var(--text3);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin:20px 0;position:relative;}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border);}
+.auth-divider::before{left:0;} .auth-divider::after{right:0;}
+.back-link{display:block;text-align:center;color:var(--text3);font-size:12px;margin-top:20px;text-decoration:none;transition:var(--tr);}
+.back-link:hover{color:var(--gold2);}
+.form-panel{display:none;animation:fadeUp 0.3s both;}
+.form-panel.active{display:block;}
+</style>
+</head>
+<body>
+<div class="dots"></div>
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <a href="index.html">Spice <em>&</em> Soul</a>
+      <p>Where Flavours Meet Soul</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('signin')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+    <div class="auth-err" id="authErr"></div>
+    <div class="auth-ok" id="authOk"></div>
+
+    <!-- SIGN IN -->
+    <div class="form-panel active" id="signinPanel">
+      <div class="field"><label>Email</label><input type="email" id="siEmail" placeholder="your@email.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input type="password" id="siPass" placeholder="Your password" autocomplete="current-password"></div>
+      <button class="auth-btn" onclick="doSignin()">Sign In ✦</button>
+      <div class="auth-divider">or</div>
+      <div style="text-align:center;font-size:12px;color:var(--text3);">Don't have an account? <span style="color:var(--gold2);cursor:pointer;font-weight:700;" onclick="switchTab('signup')">Sign up free</span></div>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="form-panel" id="signupPanel">
+      <div class="field"><label>Full Name</label><input type="text" id="suName" placeholder="Your full name"></div>
+      <div class="field"><label>Email</label><input type="email" id="suEmail" placeholder="your@email.com"></div>
+      <div class="field"><label>Phone</label><input type="tel" id="suPhone" placeholder="+91 98765 43210"></div>
+      <div class="field"><label>Password</label><input type="password" id="suPass" placeholder="Create a password"></div>
+      <button class="auth-btn" onclick="doSignup()">Create Account ✦</button>
+      <div class="auth-divider">or</div>
+      <div style="text-align:center;font-size:12px;color:var(--text3);">Already have an account? <span style="color:var(--gold2);cursor:pointer;font-weight:700;" onclick="switchTab('signin')">Sign in</span></div>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to Restaurant</a>
+  </div>
+</div>
+<script>
+const API = 'http://localhost:3001/api';
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active', (tab==='signin'&&i===0)||(tab==='signup'&&i===1)));
+  document.getElementById('signinPanel').classList.toggle('active', tab==='signin');
+  document.getElementById('signupPanel').classList.toggle('active', tab==='signup');
+  clearMsgs();
+}
+function showErr(msg){ const e=document.getElementById('authErr'); e.textContent=msg; e.classList.add('show'); document.getElementById('authOk').classList.remove('show'); }
+function showOk(msg){ const e=document.getElementById('authOk'); e.textContent=msg; e.classList.add('show'); document.getElementById('authErr').classList.remove('show'); }
+function clearMsgs(){ document.getElementById('authErr').classList.remove('show'); document.getElementById('authOk').classList.remove('show'); }
+
+async function doSignin(){
+  const email=document.getElementById('siEmail').value.trim();
+  const pass=document.getElementById('siPass').value;
+  if(!email||!pass){ showErr('Please enter email and password.'); return; }
+  try{
+    const r = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d = await r.json();
+    if(!r.ok){ showErr(d.message||'Invalid credentials.'); return; }
+    localStorage.setItem('ss_token', d.token);
+    localStorage.setItem('ss_user', JSON.stringify(d.user));
+    showOk('Welcome back, '+d.user.name+'! Redirecting...');
+    setTimeout(() => window.location.href='index.html', 1200);
+  }catch(e){ showErr('Cannot connect to server. Make sure it is running.'); }
+}
+
+async function doSignup(){
+  const name=document.getElementById('suName').value.trim();
+  const email=document.getElementById('suEmail').value.trim();
+  const phone=document.getElementById('suPhone').value.trim();
+  const pass=document.getElementById('suPass').value;
+  if(!name||!email||!pass){ showErr('Please fill all required fields.'); return; }
+  if(pass.length<6){ showErr('Password must be at least 6 characters.'); return; }
+  try{
+    const r = await fetch(API+'/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,password:pass})});
+    const d = await r.json();
+    if(!r.ok){ showErr(d.message||'Signup failed.'); return; }
+    localStorage.setItem('ss_token', d.token);
+    localStorage.setItem('ss_user', JSON.stringify(d.user));
+    showOk('Account created! Welcome, '+d.user.name+'! Redirecting...');
+    setTimeout(() => window.location.href='index.html', 1200);
+  }catch(e){ showErr('Cannot connect to server. Make sure it is running.'); }
+}
+
+// Check if already logged in
+const token = localStorage.getItem('ss_token');
+if(token){ window.location.href='index.html'; }
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "id": "1774851886806",
+      "name": "Admin",
+      "email": "admin@restaurant.com",
+      "password": "$2a$10$DFwJQxnugm2pQCX.LKrmquzaiTNSNa1VGLwyzoRWbvLT.bxTEYWe.",
+      "role": "admin",
+      "phone": "",
+      "createdAt": "2026-03-30T06:24:46.806Z"
+    },
+    {
+      "id": "1774852084446",
+      "name": "Kirubakaran",
+      "email": "Kirubakaran3545@gmail.com",
+      "phone": "6383304533",
+      "password": "$2a$10$L.pBv2rSIBYttcaQ.Ul12eC9ksb8xmY8AUgIOHENzhBesLRi3JU/m",
+      "role": "customer",
+      "createdAt": "2026-03-30T06:28:04.446Z"
+    },
+    {
+      "id": "1774852353886",
+      "name": "Kirubakaran K",
+      "email": "kirubakarank1103@gmail.com",
+      "phone": "6383304533",
+      "password": "$2a$10$lgHGDuoRh6avHAS4SiexEOOn6ujmfoV.vXDFjkqzM1xRZWJA5sgU2",
+      "role": "customer",
+      "createdAt": "2026-03-30T06:32:33.886Z"
+    },
+    {
+      "id": "1774858722382",
+      "name": "Kirubakaran",
+      "email": "kirubakaran3545@gmail.com",
+      "phone": "6383304533",
+      "password": "$2a$10$41tv0ZFd2h2FVZv99Tax7eEvijxywZZUeFQck9DGwViFKJTyu7tWe",
+      "role": "customer",
+      "createdAt": "2026-03-30T08:18:42.383Z"
+    }
+  ],
+  "orders": [],
+  "reservations": []
+}

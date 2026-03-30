@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Spice & Soul</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0b08;--bg2:#141109;--bg3:#1c1810;--bg4:#252018;
+  --border:rgba(181,137,42,0.18);--border2:rgba(181,137,42,0.32);
+  --text:#f5f0e8;--text2:#c8bfa8;--text3:#8a7f6a;
+  --gold:#b5892a;--gold2:#d4a843;
+  --green:#2d6b3f;--red:#8b2a2a;
+  --r8:8px;--r12:12px;--r16:16px;--r22:22px;--r30:30px;
+  --tr:all 0.22s ease;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;display:flex;min-height:100vh;}
+::-webkit-scrollbar{width:3px;} ::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 16px;flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;}
+.sb-logo{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);padding:8px 12px 24px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.sb-logo em{color:var(--gold2);font-style:italic;}
+.sb-logo span{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:9px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;margin-top:2px;}
+.sb-nav{display:flex;flex-direction:column;gap:4px;flex:1;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r12);color:var(--text2);font-size:12px;font-weight:600;letter-spacing:0.5px;cursor:pointer;transition:var(--tr);background:none;border:none;width:100%;text-align:left;font-family:'Plus Jakarta Sans',sans-serif;}
+.sb-item:hover{background:var(--bg3);color:var(--text);}
+.sb-item.active{background:rgba(181,137,42,0.12);color:var(--gold2);border-left:2px solid var(--gold2);}
+.sb-item .icon{font-size:16px;width:20px;text-align:center;}
+.sb-logout{margin-top:auto;padding-top:16px;border-top:1px solid var(--border);}
+.sb-logout button{width:100%;background:rgba(139,42,42,0.15);border:1px solid rgba(139,42,42,0.3);border-radius:var(--r12);padding:10px;color:#e88;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:var(--tr);}
+.sb-logout button:hover{background:rgba(139,42,42,0.25);}
+
+/* MAIN */
+.main{flex:1;margin-left:220px;padding:32px;min-height:100vh;}
+.page{display:none;} .page.active{display:block;}
+.page-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:4px;}
+.page-sub{font-size:12px;color:var(--text3);margin-bottom:28px;letter-spacing:0.5px;}
+.gold-line{width:36px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),transparent);border-radius:2px;margin-bottom:28px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r22);padding:22px;transition:var(--tr);}
+.stat-card:hover{border-color:var(--border2);}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:10px;}
+.stat-num{font-family:'DM Serif Display',serif;font-size:36px;color:var(--gold2);}
+.stat-change{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* TABLE */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r22);overflow:hidden;}
+.table-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.table-head h3{font-size:14px;font-weight:700;color:var(--text);}
+.table-head span{font-size:11px;color:var(--text3);}
+table{width:100%;border-collapse:collapse;}
+th{padding:12px 20px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;border-bottom:1px solid var(--border);background:var(--bg3);}
+td{padding:13px 20px;font-size:12px;color:var(--text2);border-bottom:1px solid rgba(181,137,42,0.07);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(181,137,42,0.03);}
+.status-badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.s-pending{background:rgba(181,137,42,0.12);color:var(--gold2);}
+.s-preparing{background:rgba(30,90,200,0.12);color:#6ab;}
+.s-ready{background:rgba(45,107,63,0.12);color:#6d8;}
+.s-delivered{background:rgba(100,100,100,0.12);color:var(--text3);}
+.status-select{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r8);padding:4px 8px;color:var(--text2);font-size:10px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;outline:none;}
+.status-select:focus{border-color:var(--gold2);}
+.empty-state{text-align:center;padding:48px;color:var(--text3);font-size:13px;}
+.loading{text-align:center;padding:32px;color:var(--text3);font-size:13px;}
+.refresh-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r8);padding:7px 14px;color:var(--text2);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:var(--tr);}
+.refresh-btn:hover{border-color:var(--gold2);color:var(--gold2);}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:11px 20px;border-radius:40px;font-size:12px;font-weight:600;opacity:0;transition:all 0.25s;z-index:9999;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo">Spice <em>&</em> Soul<span>Admin Panel</span></div>
+  <div class="sb-nav">
+    <button class="sb-item active" onclick="showPage('dashboard',this)"><span class="icon">📊</span>Dashboard</button>
+    <button class="sb-item" onclick="showPage('orders',this)"><span class="icon">🛒</span>Orders</button>
+    <button class="sb-item" onclick="showPage('reservations',this)"><span class="icon">📅</span>Reservations</button>
+    <button class="sb-item" onclick="showPage('users',this)"><span class="icon">👥</span>Users</button>
+    <button class="sb-item" onclick="showPage('menu',this)"><span class="icon">🍽️</span>Menu Items</button>
+  </div>
+  <div class="sb-logout">
+    <a href="index.html" style="display:block;text-align:center;color:var(--text3);font-size:11px;text-decoration:none;margin-bottom:10px;transition:var(--tr);" onmouseover="this.style.color='var(--gold2)'" onmouseout="this.style.color='var(--text3)'">← Back to Site</a>
+    <button onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub">Welcome back, Admin · Real-time overview</div>
+    <div class="gold-line"></div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-num" id="statOrders">—</div><div class="stat-change">All time</div></div>
+      <div class="stat-card"><div class="stat-label">Reservations</div><div class="stat-num" id="statRes">—</div><div class="stat-change">All time</div></div>
+      <div class="stat-card"><div class="stat-label">Registered Users</div><div class="stat-num" id="statUsers">—</div><div class="stat-change">Total accounts</div></div>
+      <div class="stat-card"><div class="stat-label">Pending Orders</div><div class="stat-num" id="statPending" style="color:var(--gold2)">—</div><div class="stat-change">Needs attention</div></div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-head"><h3>Recent Orders</h3><button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button></div>
+      <div id="recentOrdersBody"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="page" id="page-orders">
+    <div class="page-title">Orders</div>
+    <div class="page-sub">Manage and update order status</div>
+    <div class="gold-line"></div>
+    <div class="table-wrap">
+      <div class="table-head"><h3>All Orders</h3><button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button></div>
+      <div id="ordersBody"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- RESERVATIONS -->
+  <div class="page" id="page-reservations">
+    <div class="page-title">Reservations</div>
+    <div class="page-sub">Upcoming table bookings</div>
+    <div class="gold-line"></div>
+    <div class="table-wrap">
+      <div class="table-head"><h3>All Reservations</h3><button class="refresh-btn" onclick="loadReservations()">↻ Refresh</button></div>
+      <div id="reservationsBody"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="page" id="page-users">
+    <div class="page-title">Users</div>
+    <div class="page-sub">Registered accounts</div>
+    <div class="gold-line"></div>
+    <div class="table-wrap">
+      <div class="table-head"><h3>All Users</h3><button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button></div>
+      <div id="usersBody"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div class="page" id="page-menu">
+    <div class="page-title">Menu Items</div>
+    <div class="page-sub">All dishes in the system</div>
+    <div class="gold-line"></div>
+    <div class="table-wrap">
+      <div class="table-head"><h3>Menu Overview</h3><span>20 items across 6 cuisines</span></div>
+      <table>
+        <thead><tr><th>#</th><th>Dish</th><th>Cuisine</th><th>Type</th><th>Price</th><th>Rating</th></tr></thead>
+        <tbody id="menuBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3001/api';
+function getToken(){ return localStorage.getItem('ss_token'); }
+function getUser(){ try{ return JSON.parse(localStorage.getItem('ss_user')); }catch(e){ return null; } }
+
+// Auth check
+const user = getUser();
+if(!user || user.role !== 'admin'){ window.location.href = 'auth.html'; }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='dashboard') loadDashboard();
+  else if(id==='orders') loadOrders();
+  else if(id==='reservations') loadReservations();
+  else if(id==='users') loadUsers();
+  else if(id==='menu') buildMenuTable();
+}
+
+function logout(){
+  localStorage.removeItem('ss_token'); localStorage.removeItem('ss_user');
+  window.location.href = 'auth.html';
+}
+
+async function apiGet(endpoint){
+  const r = await fetch(API+endpoint,{headers:{'Authorization':'Bearer '+getToken()}});
+  if(!r.ok) throw new Error('API error');
+  return r.json();
+}
+async function apiPatch(endpoint, data){
+  const r = await fetch(API+endpoint,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify(data)});
+  return r.json();
+}
+
+// ── DASHBOARD ──
+async function loadDashboard(){
+  try{
+    const [orders, res, users] = await Promise.all([apiGet('/admin/orders'), apiGet('/admin/reservations'), apiGet('/admin/users')]);
+    document.getElementById('statOrders').textContent = orders.length;
+    document.getElementById('statRes').textContent = res.length;
+    document.getElementById('statUsers').textContent = users.length;
+    const pending = orders.filter(o => o.status === 'pending').length;
+    document.getElementById('statPending').textContent = pending;
+    const recent = orders.slice(-8).reverse();
+    document.getElementById('recentOrdersBody').innerHTML = recent.length ? `<table>
+      <thead><tr><th>ID</th><th>Items</th><th>Total</th><th>Table</th><th>Status</th><th>Time</th></tr></thead>
+      <tbody>${recent.map(o => `<tr>
+        <td style="color:var(--gold2);font-family:'DM Serif Display',serif">#${o.id?.slice(-4)||'—'}</td>
+        <td>${(o.items||[]).slice(0,2).map(i=>i.name).join(', ')}</td>
+        <td style="color:var(--gold2)">₹${o.total||0}</td>
+        <td>${o.tableNumber||'—'}</td>
+        <td><span class="status-badge s-${o.status||'pending'}">${o.status||'pending'}</span></td>
+        <td>${o.createdAt ? new Date(o.createdAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '—'}</td>
+      </tr>`).join('')}</tbody>
+    </table>` : '<div class="empty-state">No orders yet 🍽️</div>';
+  }catch(e){ document.getElementById('recentOrdersBody').innerHTML = '<div class="empty-state">⚠️ Server offline. Run <code>npm start</code></div>'; }
+}
+
+// ── ORDERS ──
+async function loadOrders(){
+  const body = document.getElementById('ordersBody');
+  body.innerHTML = '<div class="loading">Loading...</div>';
+  try{
+    const orders = await apiGet('/admin/orders');
+    if(!orders.length){ body.innerHTML='<div class="empty-state">No orders yet 🛒</div>'; return; }
+    body.innerHTML = `<table>
+      <thead><tr><th>ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Table</th><th>Status</th><th>Update</th></tr></thead>
+      <tbody>${orders.reverse().map(o => `<tr>
+        <td style="color:var(--gold2);font-family:'DM Serif Display',serif">#${o.id?.slice(-6)||'—'}</td>
+        <td>${o.userId||'Guest'}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(o.items||[]).map(i=>i.name+'×'+i.qty).join(', ')}</td>
+        <td style="color:var(--gold2)">₹${o.total||0}</td>
+        <td>${o.tableNumber||'—'}</td>
+        <td><span class="status-badge s-${o.status||'pending'}">${o.status||'pending'}</span></td>
+        <td><select class="status-select" onchange="updateOrder('${o.id}',this.value)">
+          <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
+          <option value="preparing" ${o.status==='preparing'?'selected':''}>Preparing</option>
+          <option value="ready" ${o.status==='ready'?'selected':''}>Ready</option>
+          <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+        </select></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }catch(e){ body.innerHTML='<div class="empty-state">⚠️ Server offline. Run <code>npm start</code></div>'; }
+}
+async function updateOrder(id, status){
+  try{
+    await apiPatch('/admin/orders/'+id, {status});
+    showToast('Order updated to ' + status + ' ✓');
+    setTimeout(loadOrders, 400);
+  }catch(e){ showToast('Update failed'); }
+}
+
+// ── RESERVATIONS ──
+async function loadReservations(){
+  const body = document.getElementById('reservationsBody');
+  body.innerHTML = '<div class="loading">Loading...</div>';
+  try{
+    const res = await apiGet('/admin/reservations');
+    if(!res.length){ body.innerHTML='<div class="empty-state">No reservations yet 📅</div>'; return; }
+    body.innerHTML = `<table>
+      <thead><tr><th>ID</th><th>User</th><th>Date</th><th>Time</th><th>Guests</th><th>Occasion</th><th>Notes</th></tr></thead>
+      <tbody>${res.reverse().map(r => `<tr>
+        <td style="color:var(--gold2);font-family:'DM Serif Display',serif">#${r.id?.slice(-4)||'—'}</td>
+        <td>${r.userId||'—'}</td>
+        <td>${r.date||'—'}</td>
+        <td>${r.time||'—'}</td>
+        <td>${r.guests||'—'}</td>
+        <td>${r.occasion||'—'}</td>
+        <td style="color:var(--text3)">${r.notes||'—'}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }catch(e){ body.innerHTML='<div class="empty-state">⚠️ Server offline. Run <code>npm start</code></div>'; }
+}
+
+// ── USERS ──
+async function loadUsers(){
+  const body = document.getElementById('usersBody');
+  body.innerHTML = '<div class="loading">Loading...</div>';
+  try{
+    const users = await apiGet('/admin/users');
+    if(!users.length){ body.innerHTML='<div class="empty-state">No users yet 👥</div>'; return; }
+    body.innerHTML = `<table>
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>${users.map(u => `<tr>
+        <td style="font-weight:700;color:var(--text)">${u.name||'—'}</td>
+        <td>${u.email||'—'}</td>
+        <td>${u.phone||'—'}</td>
+        <td><span class="status-badge ${u.role==='admin'?'s-ready':'s-pending'}">${u.role||'user'}</span></td>
+        <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }catch(e){ body.innerHTML='<div class="empty-state">⚠️ Server offline. Run <code>npm start</code></div>'; }
+}
+
+// ── MENU TABLE ──
+const DISHES=[
+  {id:1,name:'Royal Lamb Biryani',cuisine:'Indian',type:'Non-Veg',price:520,rating:5.0},
+  {id:2,name:'Tandoori Chicken',cuisine:'Indian',type:'Non-Veg',price:349,rating:4.8},
+  {id:3,name:'Paneer Butter Masala',cuisine:'Indian',type:'Veg',price:319,rating:4.7},
+  {id:4,name:'Dal Makhani Royal',cuisine:'Indian',type:'Veg',price:349,rating:4.6},
+  {id:5,name:'Mutton Rogan Josh',cuisine:'Indian',type:'Non-Veg',price:499,rating:4.8},
+  {id:6,name:'Paneer Tikka',cuisine:'Indian',type:'Veg',price:299,rating:4.5},
+  {id:7,name:'Truffle Mushroom Pasta',cuisine:'Italian',type:'Veg',price:449,rating:4.9},
+  {id:8,name:'Margherita Napoletana',cuisine:'Italian',type:'Veg',price:349,rating:4.5},
+  {id:9,name:'Risotto ai Frutti di Mare',cuisine:'Italian',type:'Non-Veg',price:549,rating:4.8},
+  {id:10,name:'Premium Sashimi Platter',cuisine:'Japanese',type:'Non-Veg',price:899,rating:5.0},
+  {id:11,name:'Wagyu Ramen',cuisine:'Japanese',type:'Non-Veg',price:699,rating:4.9},
+  {id:12,name:'Dragon Roll',cuisine:'Japanese',type:'Non-Veg',price:449,rating:4.7},
+  {id:13,name:'Black Angus Burger',cuisine:'American',type:'Non-Veg',price:549,rating:4.8},
+  {id:14,name:'Smoky BBQ Ribs',cuisine:'American',type:'Non-Veg',price:799,rating:4.9},
+  {id:15,name:'Peking Duck',cuisine:'Chinese',type:'Non-Veg',price:899,rating:4.9},
+  {id:16,name:'Dim Sum Basket',cuisine:'Chinese',type:'Non-Veg',price:349,rating:4.6},
+  {id:17,name:'Mango Lassi',cuisine:'Drinks',type:'Veg',price:179,rating:4.8},
+  {id:18,name:'Kashmiri Kahwa',cuisine:'Drinks',type:'Veg',price:129,rating:4.8},
+  {id:19,name:'Virgin Mojito',cuisine:'Drinks',type:'Veg',price:153,rating:4.5},
+  {id:20,name:'Gulab Jamun Royale',cuisine:'Indian',type:'Veg',price:199,rating:4.9},
+];
+function buildMenuTable(){
+  document.getElementById('menuBody').innerHTML = DISHES.map((d,i) => `<tr>
+    <td style="color:var(--text3)">${i+1}</td>
+    <td style="font-weight:700;color:var(--text)">${d.name}</td>
+    <td><span class="status-badge s-pending">${d.cuisine}</span></td>
+    <td style="color:${d.type==='Veg'?'#6d8':'#e77'}">${d.type}</td>
+    <td style="color:var(--gold2);font-family:'DM Serif Display',serif;font-size:16px">₹${d.price}</td>
+    <td>⭐ ${d.rating}</td>
+  </tr>`).join('');
+}
+
+// ── INIT ──
+loadDashboard();
+buildMenuTable();
+</script>
+</body>
+</html>

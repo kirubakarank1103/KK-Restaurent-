@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spice & Soul — Where Flavours Meet Soul</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f9f8f6;
+  --bg2:     #f2efe9;
+  --bg3:     #e8e3db;
+  --bg4:     #e8e3db;
+  --border:  #e0dbd2;
+  --border2: #cdc7bc;
+  --text:    #1a1714;
+  --text2:   #6b6259;
+  --text3:   #a8a09a;
+  --gold:    #b5892a;
+  --gold2:   #d4a843;
+  --gold3:   #8a6520;
+  --gold-dim:#faf3e0;
+  --green:   #2d6b3f;
+  --red:     #c0392b;
+  --shadow:  0 8px 32px rgba(0,0,0,0.5);
+  --shadow-gold: 0 8px 32px rgba(181,137,42,0.15);
+  --r8:8px; --r12:12px; --r16:16px; --r22:22px; --r30:30px; --r50:50px;
+  --tr: all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+*{margin:2;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;}
+img{display:block;}
+button,a{font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decoration:none;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px;}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideUp{from{transform:translateY(36px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+
+/* ── NAVBAR ── */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:900;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;transition:var(--tr);}
+.navbar.scrolled{background:rgba(255, 255, 255, 0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text);letter-spacing:1px;}
+.nav-logo em{color:var(--gold2);font-style:italic;}
+.nav-links{display:flex;align-items:center;gap:36px;}
+.nav-links a{color:var(--text2);font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;transition:var(--tr);}
+.nav-links a:hover{color:var(--gold2);}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-cart{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r50);padding:8px 18px;color:var(--text);font-size:12px;font-weight:700;letter-spacing:1px;position:relative;transition:var(--tr);}
+.nav-cart:hover{border-color:var(--gold2);color:var(--gold2);}
+.nav-cart-count{position:absolute;top:-7px;right:-7px;background:var(--gold);color:#000;font-size:9px;font-weight:800;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;}
+.nav-user{display:flex;align-items:center;gap:8px;background:var(--gold);border:none;border-radius:var(--r50);padding:8px 18px;color:#000;font-size:12px;font-weight:800;letter-spacing:1px;transition:var(--tr);}
+.nav-user:hover{background:var(--gold2);}
+.nav-user-avatar{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(181,137,42,0.08) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(181,137,42,0.04) 0%,transparent 60%),linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);}
+/* Decorative circles */
+.hero-ring{position:absolute;border-radius:50%;border:1px solid var(--border);pointer-events:none;}
+.hero-ring-1{width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 40s linear infinite;}
+.hero-ring-2{width:800px;height:800px;top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 60s linear infinite reverse;border-color:rgba(181,137,42,0.08);}
+.hero-ring-3{width:1100px;height:1100px;top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 90s linear infinite;border-color:rgba(181,137,42,0.05);}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(181,137,42,0.12) 1px,transparent 1px);background-size:44px 44px;opacity:0.4;}
+.hero-content{position:relative;z-index:2;text-align:center;padding:40px 20px;max-width:720px;}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(181,137,42,0.1);border:1px solid rgba(181,137,42,0.35);border-radius:var(--r50);padding:7px 20px;font-size:10px;letter-spacing:4px;color:var(--gold2);text-transform:uppercase;font-weight:700;margin-bottom:28px;animation:fadeUp 0.7s 0.1s both;}
+.hero-badge::before{content:'✦';font-size:8px;}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(52px,9vw,96px);line-height:0.95;letter-spacing:2px;margin-bottom:90px;animation:fadeUp 0.7s 0.25s both;color:var(--text);}
+.hero-title em{color:var(--gold2);font-style:italic;}
+.hero-sub{font-size:15px;color:var(--text2);line-height:1.8;max-width:520px;margin:0 auto 36px;animation:fadeUp 0.7s 0.4s both;font-weight:400;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px;animation:fadeUp 0.7s 0.55s both;}
+.btn-gold{background:var(--gold);border:none;border-radius:var(--r50);padding:14px 32px;color:#000;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:var(--tr);}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(181,137,42,0.35);}
+.btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,0.2);border-radius:var(--r50);padding:14px 32px;color:var(--text);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:var(--tr);}
+.btn-outline:hover{border-color:var(--gold2);color:var(--gold2);}
+.hero-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.7s 0.7s both;}
+.hero-stat-num{font-family:'DM Serif Display',serif;font-size:38px;color:var(--gold2);line-height:1;}
+.hero-stat-lbl{font-size:9px;letter-spacing:3.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-top:4px;}
+.hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);font-size:9px;letter-spacing:3px;text-transform:uppercase;animation:fadeIn 1s 1.2s both;}
+.hero-scroll::after{content:'';width:1px;height:32px;background:linear-gradient(to bottom,var(--gold-dim),transparent);}
+
+/* ── SECTION COMMONS ── */
+.section{padding:96px 40px;}
+.section-inner{max-width:1140px;margin:0 auto;}
+.sec-eyebrow{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px;}
+.sec-title{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,52px);color:var(--text);line-height:1.1;margin-bottom:16px;}
+.sec-title em{color:var(--gold2);font-style:italic;}
+.gold-bar{width:40px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),transparent);border-radius:2px;margin-bottom:20px;}
+.sec-sub{font-size:14px;color:var(--text2);line-height:1.8;max-width:520px;}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+.about-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.about-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r22);padding:24px;transition:var(--tr);}
+.about-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:var(--shadow-gold);}
+.about-card-icon{font-size:28px;margin-bottom:12px;}
+.about-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.about-card-desc{font-size:12px;color:var(--text3);line-height:1.6;}
+.about-img-wrap{position:relative;}
+.about-img{width:100%;height:420px;object-fit:cover;border-radius:var(--r30);opacity:0.85;}
+.about-img-badge{position:absolute;bottom:24px;left:24px;background:rgba(13,11,8,0.9);backdrop-filter:blur(12px);border:1px solid var(--border2);border-radius:var(--r16);padding:14px 20px;}
+.about-img-badge .num{font-family:'DM Serif Display',serif;font-size:32px;color:var(--gold2);}
+.about-img-badge .lbl{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;}
+
+/* ── MENU ── */
+.menu-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.filter-btn{background:transparent;border:1.5px solid var(--border);border-radius:var(--r50);padding:8px 20px;color:var(--text2);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:var(--tr);}
+.filter-btn:hover{border-color:var(--gold2);color:var(--gold2);}
+.filter-btn.active{background:var(--gold);border-color:var(--gold);color:#000;}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.dish-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r22);overflow:hidden;transition:var(--tr);cursor:pointer;}
+.dish-card:hover{border-color:var(--border2);transform:translateY(-6px);box-shadow:0 16px 48px rgba(0,0,0,0.4),var(--shadow-gold);}
+.dish-img{height:200px;overflow:hidden;position:relative;background:var(--bg4);}
+.dish-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;}
+.dish-card:hover .dish-img img{transform:scale(1.07);}
+.dish-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:var(--r50);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.badge-best{background:var(--gold);color:#000;}
+.badge-new{background:rgba(45,107,63,0.9);color:#fff;}
+.badge-special{background:rgba(181,137,42,0.2);border:1px solid var(--gold);color:var(--gold2);}
+.dish-type{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:4px;border:1.5px solid;background:rgba(13,11,8,0.9);display:flex;align-items:center;justify-content:center;font-size:7px;}
+.dish-type.veg{border-color:#2d6b3f;color:#2d6b3f;}
+.dish-type.veg::after{content:'●';}
+.dish-type.nonveg{border-color:#c0392b;color:#c0392b;}
+.dish-type.nonveg::after{content:'▲';}
+.dish-body{padding:18px;}
+.dish-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.dish-desc{font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.dish-footer{display:flex;align-items:center;justify-content:space-between;}
+.dish-price{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold2);font-weight:600;}
+.dish-price-old{font-size:11px;color:var(--text3);text-decoration:line-through;margin-right:4px;}
+.dish-meta{font-size:10px;color:var(--text3);}
+.dish-meta .star{color:var(--gold2);}
+.dish-add{background:var(--gold);border:none;border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#000;transition:var(--tr);}
+.dish-add:hover{background:var(--gold2);transform:scale(1.1);}
+
+/* ── RESERVATION ── */
+.reserve-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r30);padding:48px;max-width:680px;margin:0 auto;}
+.reserve-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.field-group{display:flex;flex-direction:column;gap:8px;}
+.field-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;}
+.field-input{background:var(--bg4);border:1.5px solid var(--border);border-radius:var(--r12);padding:13px 16px;color:var(--text);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:var(--tr);}
+.field-input:focus{border-color:var(--gold2);background:var(--bg2);}
+.field-input::placeholder{color:var(--text3);}
+.field-input option{background:var(--bg4);}
+.reserve-btn{width:100%;background:var(--gold);border:none;border-radius:var(--r16);padding:16px;color:#000;font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-top:8px;transition:var(--tr);}
+.reserve-btn:hover{background:var(--gold2);}
+
+/* ── GALLERY ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,220px);gap:16px;}
+.gallery-item{border-radius:var(--r22);overflow:hidden;position:relative;cursor:pointer;}
+.gallery-item:first-child{grid-row:span 2;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;}
+.gallery-item:hover img{transform:scale(1.08);}
+.gallery-caption{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,0.85),transparent);display:flex;align-items:flex-end;padding:20px;opacity:0;transition:var(--tr);}
+.gallery-item:hover .gallery-caption{opacity:1;}
+.gallery-caption span{font-family:'DM Serif Display',serif;font-size:16px;color:var(--gold2);}
+
+/* ── CART MODAL ── */
+.cart-modal{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.7);backdrop-filter:blur(8px);z-index:9000;align-items:flex-end;justify-content:center;}
+.cart-modal.show{display:flex;}
+.cart-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r30) var(--r30) 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;animation:slideUp 0.32s ease;box-shadow:0 -8px 48px rgba(0,0,0,0.6);}
+.cart-box::-webkit-scrollbar{width:2px;}
+.cart-hd{display:flex;align-items:center;justify-content:space-between;padding:24px 24px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:2;}
+.cart-hd h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text);}
+.cart-close{background:var(--bg3);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2);transition:var(--tr);}
+.cart-close:hover{background:var(--gold);color:#000;border-color:var(--gold);}
+.cart-body{padding:16px 24px;}
+.empty-cart{text-align:center;padding:40px 0;color:var(--text3);font-size:13px;}
+.cart-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.cart-row-img{width:54px;height:54px;border-radius:var(--r12);overflow:hidden;background:var(--bg4);flex-shrink:0;}
+.cart-row-img img{width:100%;height:100%;object-fit:cover;}
+.cart-row-info{flex:1;}
+.cart-row-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.cart-row-unit{font-size:11px;color:var(--text3);}
+.cqty{display:flex;align-items:center;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:10px;}
+.cq{width:30px;height:30px;background:none;border:none;font-size:16px;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:var(--tr);}
+.cq:hover{color:var(--gold2);}
+.cqn{font-size:13px;font-weight:700;min-width:22px;text-align:center;color:var(--text);}
+.cart-row-price{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold2);font-weight:600;min-width:60px;text-align:right;}
+.cart-summary{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r16);padding:16px;margin-top:16px;}
+.cs-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500;}
+.cs-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--text);border-top:1px solid var(--border);padding-top:12px;margin-top:4px;}
+.cs-total span{color:var(--gold2);font-family:'Cormorant Garamond',serif;font-size:22px;}
+.cart-field{width:100%;background:var(--bg4);border:1.5px solid var(--border);border-radius:var(--r12);padding:12px 16px;color:var(--text);font-size:13px;outline:none;margin-top:12px;font-family:'Plus Jakarta Sans',sans-serif;transition:var(--tr);}
+.cart-field:focus{border-color:var(--gold2);}
+.cart-field::placeholder{color:var(--text3);}
+.place-btn{width:100%;background:var(--gold);border:none;border-radius:var(--r16);padding:16px;color:#000;font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-top:12px;transition:var(--tr);}
+.place-btn:hover{background:var(--gold2);}
+
+/* ── DISH POPUP ── */
+.dish-popup{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.75);backdrop-filter:blur(8px);z-index:8000;align-items:flex-end;justify-content:center;}
+.dish-popup.show{display:flex;}
+.dish-popup-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r30) var(--r30) 0 0;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:slideUp 0.32s ease;}
+.dp-img{height:240px;overflow:hidden;background:var(--bg4);position:relative;}
+.dp-img img{width:100%;height:100%;object-fit:cover;}
+.dp-close{position:absolute;top:14px;right:14px;background:rgba(13,11,8,0.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2);transition:var(--tr);}
+.dp-close:hover{background:var(--gold);color:#000;border-color:var(--gold);}
+.dp-body{padding:24px;}
+.dp-tags{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
+.dp-name{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);margin-bottom:10px;}
+.dp-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;}
+.dp-action{display:flex;align-items:center;gap:14px;}
+.qty-box{display:flex;align-items:center;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--r12);}
+.qb{width:42px;height:46px;background:none;border:none;font-size:20px;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:var(--tr);}
+.qb:hover{color:var(--gold2);}
+.qn{width:34px;text-align:center;font-size:16px;font-weight:700;color:var(--text);background:none;border:none;outline:none;pointer-events:none;}
+.dp-add-btn{flex:1;background:var(--gold);border:none;border-radius:var(--r12);padding:15px;color:#000;font-size:11px;font-weight:800;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr);text-transform:uppercase;}
+.dp-add-btn:hover{background:var(--gold2);}
+.dp-price-show{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:11px 24px;border-radius:var(--r50);font-size:12px;font-weight:600;letter-spacing:0.5px;opacity:0;transition:all 0.26s;z-index:99999;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── FOOTER ── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40px 32px;text-align:center;}
+.ft-logo{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:6px;}
+.ft-logo em{color:var(--gold2);font-style:italic;}
+.ft-tag{font-size:10px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:24px;}
+.ft-links{display:flex;justify-content:center;gap:32px;margin-bottom:24px;flex-wrap:wrap;}
+.ft-links a{color:var(--text3);font-size:12px;font-weight:500;transition:var(--tr);}
+.ft-links a:hover{color:var(--gold2);}
+.ft-copy{font-size:10px;color:var(--text3);letter-spacing:1.5px;}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.shown{opacity:1;transform:translateY(0);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .navbar{padding:0 20px;}
+  .nav-links{display:none;}
+  .section{padding:64px 20px;}
+  .about-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+  .gallery-item:first-child{grid-row:span 1;}
+  .reserve-grid{grid-template-columns:1fr;}
+  .hero-stats{gap:28px;}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar" id="navbar">
+  <a href="#hero" class="nav-logo">Spice <em>&</em> Soul</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#menu">Menu</a>
+    <a href="#reserve">Reserve</a>
+    <a href="#gallery">Gallery</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-cart" onclick="openCart()">
+      🛒 Cart
+      <span class="nav-cart-count" id="cartCount">0</span>
+    </button>
+    <div id="navUserWrap"></div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-ring hero-ring-1"></div>
+  <div class="hero-ring hero-ring-2"></div>
+  <div class="hero-ring hero-ring-3"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">Where <em>Flavours</em><br>Meet Soul</h1>
+    <p class="hero-sub">Journey through 6 world cuisines — from fiery Indian curries to silky Italian pasta, fresh Japanese sushi to smoky American BBQ.</p>
+    <div class="hero-btns">
+      <button class="btn-gold" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Explore Menu</button>
+      <button class="btn-outline" onclick="document.getElementById('reserve').scrollIntoView({behavior:'smooth'})">Reserve a Table</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">120+</div><div class="hero-stat-lbl">Menu Items</div></div>
+      <div><div class="hero-stat-num">4.9★</div><div class="hero-stat-lbl">Rating</div></div>
+      <div><div class="hero-stat-num">15k+</div><div class="hero-stat-lbl">Happy Guests</div></div>
+      <div><div class="hero-stat-num">6</div><div class="hero-stat-lbl">Cuisines</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="section" id="about">
+  <div class="section-inner">
+    <div class="about-grid reveal">
+      <div>
+        <div class="sec-eyebrow">Our Story</div>
+        <h2 class="sec-title">Royal flavours,<br><em>soulful</em> cooking</h2>
+        <div class="gold-bar"></div>
+        <p class="sec-sub" style="margin-bottom:32px;">Born from a passion for authentic cuisine, Spice & Soul brings together 6 world cuisines under one roof. Every dish is a celebration of culture, spice, and love.</p>
+        <div class="about-cards">
+          <div class="about-card"><div class="about-card-icon">🏆</div><div class="about-card-title">Award Winning</div><div class="about-card-desc">Best restaurant in Chennai 2023</div></div>
+          <div class="about-card"><div class="about-card-icon">👨‍🍳</div><div class="about-card-title">Master Chefs</div><div class="about-card-desc">12 expert chefs from 6 countries</div></div>
+          <div class="about-card"><div class="about-card-icon">🌿</div><div class="about-card-title">Fresh Daily</div><div class="about-card-desc">Ingredients sourced every morning</div></div>
+          <div class="about-card"><div class="about-card-icon">🕐</div><div class="about-card-title">Open Daily</div><div class="about-card-desc">7 AM – 11 PM, 365 days a year</div></div>
+        </div>
+      </div>
+      <div class="about-img-wrap">
+        <img class="about-img" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" alt="Restaurant" onerror="this.style.display='none'">
+        <div class="about-img-badge">
+          <div class="num">5+</div>
+          <div class="lbl">Years of Excellence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MENU ── -->
+<section class="section" id="menu" style="padding-top:48px;">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:40px;">
+      <div class="sec-eyebrow">Our Royal Menu</div>
+      <h2 class="sec-title">Handcrafted with <em>Passion</em></h2>
+      <div class="gold-bar" style="margin:0 auto;"></div>
+    </div>
+    <div class="menu-filters reveal" id="menuFilters">
+      <button class="filter-btn active" onclick="filterMenu('all',this)">All</button>
+      <button class="filter-btn" onclick="filterMenu('indian',this)">🇮🇳 Indian</button>
+      <button class="filter-btn" onclick="filterMenu('italian',this)">🇮🇹 Italian</button>
+      <button class="filter-btn" onclick="filterMenu('japanese',this)">🇯🇵 Japanese</button>
+      <button class="filter-btn" onclick="filterMenu('american',this)">🇺🇸 American</button>
+      <button class="filter-btn" onclick="filterMenu('chinese',this)">🇨🇳 Chinese</button>
+      <button class="filter-btn" onclick="filterMenu('drinks',this)">🥤 Drinks</button>
+    </div>
+    <div class="menu-grid" id="menuGrid"></div>
+  </div>
+</section>
+
+<!-- ── RESERVATION ── -->
+<section class="section" id="reserve" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:40px;">
+      <div class="sec-eyebrow">Book a Table</div>
+      <h2 class="sec-title">Reserve Your <em>Royal</em> Seat</h2>
+      <div class="gold-bar" style="margin:0 auto;"></div>
+    </div>
+    <div class="reserve-wrap reveal">
+      <div class="reserve-grid">
+        <div class="field-group"><label class="field-label">Your Name</label><input class="field-input" type="text" id="rName" placeholder="Enter your name"></div>
+        <div class="field-group"><label class="field-label">Email</label><input class="field-input" type="email" id="rEmail" placeholder="your@email.com"></div>
+        <div class="field-group"><label class="field-label">Date</label><input class="field-input" type="date" id="rDate"></div>
+        <div class="field-group"><label class="field-label">Time</label><input class="field-input" type="time" id="rTime" value="19:00"></div>
+        <div class="field-group"><label class="field-label">Guests</label>
+          <select class="field-input" id="rGuests">
+            <option>1 Guest</option><option>2 Guests</option><option selected>3–4 Guests</option><option>5–6 Guests</option><option>7+ Guests</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Occasion</label>
+          <select class="field-input" id="rOccasion">
+            <option>Regular Dining</option><option>Birthday</option><option>Anniversary</option><option>Business Lunch</option><option>Date Night</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">Special Requests</label><input class="field-input" type="text" id="rNotes" placeholder="Dietary restrictions, seating preferences..."></div>
+      <button class="reserve-btn" onclick="submitReservation()">CONFIRM RESERVATION ✦</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="section" id="gallery">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:40px;">
+      <div class="sec-eyebrow">Gallery</div>
+      <h2 class="sec-title">A Feast for <em>the Eyes</em></h2>
+      <div class="gold-bar" style="margin:0 auto;"></div>
+    </div>
+    <div class="gallery-grid reveal">
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=700&q=80" alt="Ambiance"><div class="gallery-caption"><span>Our Ambiance</span></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80" alt="Biryani"><div class="gallery-caption"><span>Royal Biryani</span></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&q=80" alt="Tandoori"><div class="gallery-caption"><span>Tandoori Nights</span></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80" alt="Bar"><div class="gallery-caption"><span>The Bar</span></div></div>
+      <div class="gallery-item"><img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=500&q=80" alt="Desserts"><div class="gallery-caption"><span>Royal Desserts</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="ft-logo">Spice <em>&</em> Soul</div>
+  <div class="ft-tag">Where Flavours Meet Soul</div>
+  <div class="ft-links">
+    <a href="#">12, Palace Road, Chennai 600001</a>
+    <a href="tel:+919876543210">+91 98765 43210</a>
+    <a href="auth.html">Sign In</a>
+    <a href="admin.html">Admin</a>
+  </div>
+  <div class="ft-copy">© 2025 SPICE & SOUL · ALL RIGHTS RESERVED</div>
+</footer>
+
+<!-- ── CART MODAL ── -->
+<div class="cart-modal" id="cartModal">
+  <div class="cart-box">
+    <div class="cart-hd">
+      <h2>Your Order</h2>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body">
+      <div id="cartItems"></div>
+      <div id="cartExtra" style="display:none">
+        <div class="cart-summary">
+          <div class="cs-row"><span>Subtotal</span><span id="csSub">₹0</span></div>
+          <div class="cs-row"><span>GST (5%)</span><span id="csGst">₹0</span></div>
+          <div class="cs-total"><span>Grand Total</span><span id="csTotal">₹0</span></div>
+        </div>
+        <input class="cart-field" type="number" id="tableNum" placeholder="Table Number" min="1">
+        <textarea class="cart-field" style="resize:none;height:56px;margin-top:10px;" id="specialNote" placeholder="Special instructions..."></textarea>
+        <button class="place-btn" onclick="placeOrder()">Place Order ✦</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DISH POPUP ── -->
+<div class="dish-popup" id="dishPopup">
+  <div class="dish-popup-box">
+    <div class="dp-img" id="dpImg">
+      <button class="dp-close" onclick="closeDishPopup()">✕</button>
+    </div>
+    <div class="dp-body">
+      <div class="dp-tags" id="dpTags"></div>
+      <div class="dp-name" id="dpName"></div>
+      <div class="dp-desc" id="dpDesc"></div>
+      <div class="dp-action">
+        <div class="qty-box">
+          <button class="qb" onclick="dpQty(-1)">−</button>
+          <input class="qn" id="dpQty" value="1" readonly>
+          <button class="qb" onclick="dpQty(1)">+</button>
+        </div>
+        <button class="dp-add-btn" id="dpAddBtn" onclick="addFromPopup()">
+          Add to Cart &nbsp;<span class="dp-price-show" id="dpPriceShow">₹0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── MENU DATA ──
+const DISHES = [
+  // INDIAN
+  {id:1,name:'Royal Lamb Biryani',desc:'Aged basmati rice layered with slow-cooked lamb, saffron, caramelised onions & 22 royal spices.',price:520,oldPrice:650,cuisine:'indian',type:'nonveg',badge:'best',rating:5.0,img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80'},
+  {id:2,name:'Tandoori Chicken',desc:'Juicy chicken marinated in yogurt & spices, cooked in a royal clay oven. Served with mint chutney.',price:349,oldPrice:420,cuisine:'indian',type:'nonveg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&q=80'},
+  {id:3,name:'Paneer Butter Masala',desc:'Soft paneer cubes in rich tomato-cream gravy with aromatic spice blend.',price:319,cuisine:'indian',type:'veg',badge:'special',rating:4.7,img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=80'},
+  {id:4,name:'Dal Makhani Royal',desc:'Black lentils slow-cooked overnight with cream & butter. The ultimate comfort dal.',price:349,cuisine:'indian',type:'veg',badge:'best',rating:4.6,img:'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=500&q=80'},
+  {id:5,name:'Mutton Rogan Josh',desc:'Kashmiri-style tender mutton in aromatic whole spice gravy. A timeless royal recipe.',price:499,cuisine:'indian',type:'nonveg',rating:4.8,img:'https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=500&q=80'},
+  {id:6,name:'Paneer Tikka',desc:'Cottage cheese cubes chargrilled with bell peppers, marinated in house spice blend.',price:299,cuisine:'indian',type:'veg',badge:'new',rating:4.5,img:'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500&q=80'},
+  // ITALIAN
+  {id:7,name:'Truffle Mushroom Pasta',desc:'Handmade tagliatelle with wild mushrooms, truffle oil & aged parmesan. Pure luxury.',price:449,cuisine:'italian',type:'veg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=500&q=80'},
+  {id:8,name:'Margherita Napoletana',desc:'Classic Neapolitan pizza with San Marzano tomatoes, fresh mozzarella & basil.',price:349,cuisine:'italian',type:'veg',rating:4.5,img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80'},
+  {id:9,name:'Risotto ai Frutti di Mare',desc:'Creamy arborio rice with prawns, scallops & mussels in a white wine bisque.',price:549,cuisine:'italian',type:'nonveg',badge:'special',rating:4.8,img:'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=500&q=80'},
+  // JAPANESE
+  {id:10,name:'Premium Sashimi Platter',desc:'Chef\'s selection of 12 pieces — salmon, tuna, yellowtail & sea bream.',price:899,cuisine:'japanese',type:'nonveg',badge:'best',rating:5.0,img:'https://images.unsplash.com/photo-1582450871972-ab5ca641643d?w=500&q=80'},
+  {id:11,name:'Wagyu Ramen',desc:'48-hour tonkotsu broth with A5 wagyu, soft egg, bamboo shoots & nori.',price:699,cuisine:'japanese',type:'nonveg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80'},
+  {id:12,name:'Dragon Roll',desc:'Crispy tempura prawn roll topped with avocado, tobiko & spicy mayo.',price:449,cuisine:'japanese',type:'nonveg',badge:'new',rating:4.7,img:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=500&q=80'},
+  // AMERICAN
+  {id:13,name:'Black Angus Burger',desc:'200g Black Angus patty, aged cheddar, caramelised onions & truffle aioli in a brioche bun.',price:549,cuisine:'american',type:'nonveg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80'},
+  {id:14,name:'Smoky BBQ Ribs',desc:'Slow-smoked pork ribs with house-made bourbon BBQ glaze. Fall-off-the-bone tender.',price:799,cuisine:'american',type:'nonveg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80'},
+  // CHINESE
+  {id:15,name:'Peking Duck',desc:'Crispy skin Peking duck with mandarin pancakes, scallions & hoisin sauce.',price:899,cuisine:'chinese',type:'nonveg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1534422298391-e4f8317fef46?w=500&q=80'},
+  {id:16,name:'Dim Sum Basket',desc:'Steamed har gow, siu mai & crystal dumplings with soy & chilli dips.',price:349,cuisine:'chinese',type:'nonveg',badge:'new',rating:4.6,img:'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&q=80'},
+  // DRINKS
+  {id:17,name:'Mango Lassi',desc:'Alphonso mango blended with creamy yogurt, saffron & cardamom. Thick, chilled & divine.',price:179,cuisine:'drinks',type:'veg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1571805529673-0f56b922b359?w=500&q=80'},
+  {id:18,name:'Kashmiri Kahwa',desc:'Traditional Kashmiri green tea with saffron, cinnamon & almonds. A royal brew.',price:129,cuisine:'drinks',type:'veg',badge:'special',rating:4.8,img:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'},
+  {id:19,name:'Virgin Mojito',desc:'Fresh mint, lime, sugar syrup & soda over crushed ice. Cool, crisp & refreshing.',price:153,cuisine:'drinks',type:'veg',rating:4.5,img:'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=500&q=80'},
+  {id:20,name:'Gulab Jamun Royale',desc:'Soft khoya dumplings soaked in rose-scented sugar syrup. Served warm with vanilla ice cream.',price:199,cuisine:'indian',type:'veg',badge:'best',rating:4.9,img:'https://images.unsplash.com/photo-1666361900831-d873b5a94193?w=500&q=80'},
+];
+
+let cart = {};
+let currentDish = null;
+const API = 'http://localhost:3001/api';
+
+// ── AUTH ──
+function getToken(){ return localStorage.getItem('ss_token'); }
+function getUser(){ try{ return JSON.parse(localStorage.getItem('ss_user')); }catch(e){ return null; } }
+function buildNavUser(){
+  const wrap = document.getElementById('navUserWrap');
+  const user = getUser();
+  if(user){
+    wrap.innerHTML = `<button class="nav-user"><div class="nav-user-avatar">${user.name.slice(0,2).toUpperCase()}</div>${user.name.split(' ')[0]}</button>`;
+  } else {
+    wrap.innerHTML = `<a href="auth.html" class="nav-user">Sign In</a>`;
+  }
+}
+
+// ── NAVBAR SCROLL ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ── REVEAL ──
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('shown'); });
+}, {threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+// ── BUILD MENU ──
+function buildMenu(dishes){
+  const grid = document.getElementById('menuGrid');
+  grid.innerHTML = '';
+  dishes.forEach(d => {
+    const badgeCls = d.badge==='best'?'badge-best':d.badge==='new'?'badge-new':'badge-special';
+    const badgeTxt = d.badge==='best'?'Best Seller':d.badge==='new'?'New':'Special';
+    const old = d.oldPrice ? `<span class="dish-price-old">₹${d.oldPrice}</span>` : '';
+    const card = document.createElement('div');
+    card.className = 'dish-card';
+    card.dataset.cuisine = d.cuisine;
+    card.innerHTML = `
+      <div class="dish-img">
+        <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.style.display='none'">
+        ${d.badge ? `<div class="dish-badge ${badgeCls}">${badgeTxt}</div>` : ''}
+        <div class="dish-type ${d.type}"></div>
+      </div>
+      <div class="dish-body">
+        <div class="dish-name">${d.name}</div>
+        <div class="dish-desc">${d.desc}</div>
+        <div class="dish-footer">
+          <div>
+            <div class="dish-price">${old}₹${d.price}</div>
+            <div class="dish-meta"><span class="star">★</span>${d.rating} · ${d.cuisine}</div>
+          </div>
+          <button class="dish-add" onclick="event.stopPropagation();quickAdd(${d.id})">+</button>
+        </div>
+      </div>`;
+    card.addEventListener('click', () => openDish(d));
+    grid.appendChild(card);
+  });
+}
+
+function filterMenu(cuisine, btn){
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cuisine === 'all' ? DISHES : DISHES.filter(d => d.cuisine === cuisine);
+  buildMenu(filtered);
+  // re-observe new cards
+  document.querySelectorAll('.dish-card').forEach((c,i) => {
+    c.style.animationDelay = (i*0.04) + 's';
+    c.style.animation = 'fadeUp 0.5s both';
+  });
+}
+
+function quickAdd(id){
+  const d = DISHES.find(x => x.id === id);
+  if(!d) return;
+  addToCart(d);
+  showToast(`${d.name} added to cart! 🛒`);
+}
+
+// ── DISH POPUP ──
+function openDish(d){
+  currentDish = d;
+  const dpImg = document.getElementById('dpImg');
+  dpImg.innerHTML = `<img src="${d.img}" alt="${d.name}" style="width:100%;height:100%;object-fit:cover"><button class="dp-close" onclick="closeDishPopup()">✕</button>`;
+  document.getElementById('dpTags').innerHTML = `
+    <span style="font-size:10px;font-weight:700;letter-spacing:2px;color:${d.type==='veg'?'#2d6b3f':'#c0392b'}">${d.type==='veg'?'VEG':'NON-VEG'}</span>
+    <span style="font-size:10px;color:var(--text3)">★ ${d.rating} · ${d.cuisine.toUpperCase()}</span>`;
+  document.getElementById('dpName').textContent = d.name;
+  document.getElementById('dpDesc').textContent = d.desc;
+  document.getElementById('dpQty').value = 1;
+  refreshDishBtn();
+  document.getElementById('dishPopup').classList.add('show');
+}
+function closeDishPopup(){ document.getElementById('dishPopup').classList.remove('show'); }
+function dpQty(delta){
+  const el = document.getElementById('dpQty');
+  el.value = Math.max(1, parseInt(el.value) + delta);
+  refreshDishBtn();
+}
+function refreshDishBtn(){
+  if(!currentDish) return;
+  const q = parseInt(document.getElementById('dpQty').value) || 1;
+  const inCart = cart[currentDish.id] ? cart[currentDish.id].qty : 0;
+  const btn = document.getElementById('dpAddBtn');
+  const totalPrice = '₹' + (currentDish.price * q);
+  if(inCart > 0){
+    btn.style.background = '#2d6b3f';
+    btn.innerHTML = `✓ ${inCart} in cart · Add ${q} more &nbsp;<span class="dp-price-show">${totalPrice}</span>`;
+  } else {
+    btn.style.background = '';
+    btn.innerHTML = `Add to Cart &nbsp;<span class="dp-price-show">${totalPrice}</span>`;
+  }
+}
+function addFromPopup(){
+  if(!currentDish) return;
+  const q = parseInt(document.getElementById('dpQty').value) || 1;
+  if(cart[currentDish.id]){ cart[currentDish.id].qty += q; }
+  else { cart[currentDish.id] = {...currentDish, qty: q}; }
+  updateCartUI();
+  showToast(`${currentDish.name} ×${q} added! 🛒`);
+  refreshDishBtn();
+}
+
+// ── CART ──
+function addToCart(d){
+  if(cart[d.id]) cart[d.id].qty++;
+  else cart[d.id] = {...d, qty:1};
+  updateCartUI();
+}
+function updateCartUI(){
+  const total = Object.values(cart).reduce((s,i) => s+i.qty, 0);
+  const el = document.getElementById('cartCount');
+  el.textContent = total;
+  el.style.display = total > 0 ? 'flex' : 'none';
+}
+function openCart(){ document.getElementById('cartModal').classList.add('show'); renderCart(); }
+function closeCart(){ document.getElementById('cartModal').classList.remove('show'); }
+function renderCart(){
+  const el = document.getElementById('cartItems');
+  const ex = document.getElementById('cartExtra');
+  const keys = Object.keys(cart);
+  if(!keys.length){ el.innerHTML = '<div class="empty-cart">🍽️ Your cart is empty<br><small>Add dishes from our menu!</small></div>'; ex.style.display='none'; return; }
+  let html='', sub=0;
+  keys.forEach(id => {
+    const {name,qty,price,img} = cart[id]; sub += qty*price;
+    html += `<div class="cart-row">
+      <div class="cart-row-img"><img src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none'"></div>
+      <div class="cart-row-info"><div class="cart-row-name">${name}</div><div class="cart-row-unit">₹${price} each</div></div>
+      <div class="cqty">
+        <button class="cq" onclick="cqCh(${id},-1)">−</button>
+        <span class="cqn">${qty}</span>
+        <button class="cq" onclick="cqCh(${id},1)">+</button>
+      </div>
+      <div class="cart-row-price">₹${qty*price}</div>
+    </div>`;
+  });
+  el.innerHTML = html;
+  const gst = Math.round(sub*0.05);
+  document.getElementById('csSub').textContent = '₹'+sub;
+  document.getElementById('csGst').textContent = '₹'+gst;
+  document.getElementById('csTotal').textContent = '₹'+(sub+gst);
+  ex.style.display = 'block';
+}
+function cqCh(id, delta){
+  if(!cart[id]) return;
+  cart[id].qty += delta;
+  if(cart[id].qty <= 0) delete cart[id];
+  updateCartUI(); renderCart();
+  if(currentDish && currentDish.id == id) refreshDishBtn();
+}
+async function placeOrder(){
+  if(!document.getElementById('tableNum').value){ showToast('Please enter table number!'); return; }
+  const items = Object.values(cart).map(i => ({name:i.name,qty:i.qty,price:i.price}));
+  const sub = items.reduce((s,i) => s+i.qty*i.price, 0);
+  const token = getToken();
+  if(token){
+    try{
+      await fetch(API+'/orders',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({items,total:sub+Math.round(sub*0.05),tableNumber:document.getElementById('tableNum').value,notes:document.getElementById('specialNote').value})});
+    }catch(e){}
+  }
+  closeCart();
+  showToast('Order placed successfully! 🎉');
+  cart = {}; updateCartUI();
+}
+
+// ── RESERVATION ──
+async function submitReservation(){
+  const name = document.getElementById('rName').value.trim();
+  const email = document.getElementById('rEmail').value.trim();
+  const date = document.getElementById('rDate').value;
+  const time = document.getElementById('rTime').value;
+  if(!name||!email||!date||!time){ showToast('Please fill all required fields!'); return; }
+  const token = getToken();
+  if(token){
+    try{
+      await fetch(API+'/reservations',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({date,time,guests:document.getElementById('rGuests').value,occasion:document.getElementById('rOccasion').value,notes:document.getElementById('rNotes').value})});
+    }catch(e){}
+  }
+  showToast(`Reservation confirmed for ${name} on ${date}! 🎉`);
+  document.getElementById('rName').value=''; document.getElementById('rEmail').value=''; document.getElementById('rDate').value='';
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ── INIT ──
+buildMenu(DISHES);
+buildNavUser();
+// Close modals on backdrop
+document.getElementById('cartModal').addEventListener('click', e => { if(e.target===document.getElementById('cartModal')) closeCart(); });
+document.getElementById('dishPopup').addEventListener('click', e => { if(e.target===document.getElementById('dishPopup')) closeDishPopup(); });
+// Reveal new elements
+setTimeout(() => { document.querySelectorAll('.reveal').forEach(el => revObs.observe(el)); }, 100);
+</script>
+</body>
+</html>
