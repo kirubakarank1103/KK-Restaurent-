@@ -59,7 +59,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .nav-user:hover{background:var(--gold2);}
 .nav-user-avatar{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;}
 
-/* ── PROFILE DROPDOWN ── */
 .profile-wrap{position:relative;}
 .profile-btn{display:flex;align-items:center;gap:8px;background:var(--gold);border:none;border-radius:var(--r50);padding:8px 18px;color:#000;font-size:12px;font-weight:800;letter-spacing:1px;transition:var(--tr);cursor:pointer;}
 .profile-btn:hover{background:var(--gold2);}
@@ -79,7 +78,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .profile-signout{color:var(--red) !important;}
 .profile-signout:hover{background:rgba(192,57,43,0.08) !important;color:var(--red) !important;}
 
-/* ── EDIT PROFILE MODAL ── */
 .edit-modal{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.7);backdrop-filter:blur(8px);z-index:9500;align-items:center;justify-content:center;}
 .edit-modal.show{display:flex;}
 .edit-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r22);width:100%;max-width:420px;overflow:hidden;animation:slideUp 0.32s ease;box-shadow:0 -8px 48px rgba(0,0,0,0.6);}
@@ -99,7 +97,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .edit-save{width:100%;background:var(--gold);border:none;border-radius:var(--r12);padding:14px;color:#000;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:4px;transition:var(--tr);cursor:pointer;}
 .edit-save:hover{background:var(--gold2);}
 
-/* ── MY ORDERS MODAL ── */
 .orders-modal{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.7);backdrop-filter:blur(8px);z-index:9500;align-items:flex-end;justify-content:center;}
 .orders-modal.show{display:flex;}
 .orders-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r30) var(--r30) 0 0;width:100%;max-width:540px;max-height:85vh;overflow-y:auto;animation:slideUp 0.32s ease;box-shadow:0 -8px 48px rgba(0,0,0,0.6);}
@@ -564,7 +561,6 @@ const API = 'https://kk-restaurent-backend.onrender.com/api';
 function getToken(){ return localStorage.getItem('ss_token'); }
 function getUser(){ try{ return JSON.parse(localStorage.getItem('ss_user')); }catch(e){ return null; } }
 
-// ── PROFILE DROPDOWN ──
 function buildNavUser(){
   const wrap = document.getElementById('navUserWrap');
   const user = getUser();
@@ -608,7 +604,6 @@ function toggleProfileDropdown(){
   if(wrap) wrap.classList.toggle('open');
 }
 
-// Close dropdown when clicking outside
 document.addEventListener('click', e => {
   const wrap = document.getElementById('profileWrap');
   if(wrap && !wrap.contains(e.target)) wrap.classList.remove('open');
@@ -621,7 +616,6 @@ function signOut(){
   setTimeout(() => { buildNavUser(); }, 500);
 }
 
-// ── EDIT PROFILE ──
 function openEditModal(){
   const wrap = document.getElementById('profileWrap');
   if(wrap) wrap.classList.remove('open');
@@ -633,9 +627,7 @@ function openEditModal(){
   document.getElementById('editPhone').value = user.phone || '';
   document.getElementById('editModal').classList.add('show');
 }
-function closeEditModal(){
-  document.getElementById('editModal').classList.remove('show');
-}
+function closeEditModal(){ document.getElementById('editModal').classList.remove('show'); }
 function saveProfile(){
   const user = getUser();
   if(!user) return;
@@ -650,7 +642,6 @@ function saveProfile(){
   showToast('Profile updated successfully! ✦');
 }
 
-// ── MY ORDERS ──
 async function openOrdersModal(){
   const wrap = document.getElementById('profileWrap');
   if(wrap) wrap.classList.remove('open');
@@ -852,21 +843,40 @@ function cqCh(id, delta){
   updateCartUI(); renderCart();
   if(currentDish && currentDish.id == id) refreshDishBtn();
 }
+
+// ✅ FIX 1: Sign in illama order block pannanum
 async function placeOrder(){
+  const token = getToken();
+  if(!token){
+    closeCart();
+    showToast('Please sign in to place an order! 🔐');
+    setTimeout(() => window.location.href='auth.html', 1500);
+    return;
+  }
   if(!document.getElementById('tableNum').value){ showToast('Please enter table number!'); return; }
   const items = Object.values(cart).map(i => ({name:i.name,qty:i.qty,price:i.price}));
   const sub = items.reduce((s,i) => s+i.qty*i.price, 0);
-  const token = getToken();
-  if(token){
-    try{
-      await fetch(API+'/orders',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({items,total:sub+Math.round(sub*0.05),tableNumber:document.getElementById('tableNum').value,notes:document.getElementById('specialNote').value})});
-    }catch(e){}
+  try{
+    const res = await fetch(API+'/orders',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        items,
+        total: sub+Math.round(sub*0.05),
+        tableNumber: document.getElementById('tableNum').value,
+        notes: document.getElementById('specialNote').value
+      })
+    });
+    if(!res.ok){ showToast('Order failed. Please try again!'); return; }
+    closeCart();
+    showToast('Order placed successfully! 🎉');
+    cart = {}; updateCartUI();
+  }catch(e){
+    showToast('Cannot connect to server. Try again!');
   }
-  closeCart();
-  showToast('Order placed successfully! 🎉');
-  cart = {}; updateCartUI();
 }
 
+// ✅ FIX 2: Sign in illama reservation block pannanum
 async function submitReservation(){
   const name = document.getElementById('rName').value.trim();
   const email = document.getElementById('rEmail').value.trim();
@@ -874,13 +884,33 @@ async function submitReservation(){
   const time = document.getElementById('rTime').value;
   if(!name||!email||!date||!time){ showToast('Please fill all required fields!'); return; }
   const token = getToken();
-  if(token){
-    try{
-      await fetch(API+'/reservations',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({date,time,guests:document.getElementById('rGuests').value,occasion:document.getElementById('rOccasion').value,notes:document.getElementById('rNotes').value})});
-    }catch(e){}
+  if(!token){
+    showToast('Please sign in to make a reservation! 🔐');
+    setTimeout(() => window.location.href='auth.html', 1500);
+    return;
   }
-  showToast(`Reservation confirmed for ${name} on ${date}! 🎉`);
-  document.getElementById('rName').value=''; document.getElementById('rEmail').value=''; document.getElementById('rDate').value='';
+  try{
+    const res = await fetch(API+'/reservations',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        date,
+        time,
+        guests: document.getElementById('rGuests').value,
+        occasion: document.getElementById('rOccasion').value,
+        name,
+        phone: email,
+        notes: document.getElementById('rNotes').value
+      })
+    });
+    if(!res.ok){ showToast('Reservation failed. Try again!'); return; }
+    showToast(`Reservation confirmed for ${name} on ${date}! 🎉`);
+    document.getElementById('rName').value='';
+    document.getElementById('rEmail').value='';
+    document.getElementById('rDate').value='';
+  }catch(e){
+    showToast('Cannot connect to server. Try again!');
+  }
 }
 
 function showToast(msg){

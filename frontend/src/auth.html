@@ -92,7 +92,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 <script>
-const API = 'http://localhost:3001/api';
+// ✅ FIX 1: Use the deployed Render backend URL (same for laptop & mobile)
+const API = 'https://kk-restaurent-backend.onrender.com/api';
+
 function switchTab(tab){
   document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active', (tab==='signin'&&i===0)||(tab==='signup'&&i===1)));
   document.getElementById('signinPanel').classList.toggle('active', tab==='signin');
@@ -107,15 +109,20 @@ async function doSignin(){
   const email=document.getElementById('siEmail').value.trim();
   const pass=document.getElementById('siPass').value;
   if(!email||!pass){ showErr('Please enter email and password.'); return; }
+  const btn = document.querySelector('#signinPanel .auth-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
   try{
     const r = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
     const d = await r.json();
-    if(!r.ok){ showErr(d.message||'Invalid credentials.'); return; }
+    if(!r.ok){ showErr(d.error||d.message||'Invalid credentials.'); btn.disabled=false; btn.textContent='Sign In ✦'; return; }
     localStorage.setItem('ss_token', d.token);
     localStorage.setItem('ss_user', JSON.stringify(d.user));
     showOk('Welcome back, '+d.user.name+'! Redirecting...');
     setTimeout(() => window.location.href='index.html', 1200);
-  }catch(e){ showErr('Cannot connect to server. Make sure it is running.'); }
+  }catch(e){
+    showErr('Cannot connect to server. Make sure it is running.');
+    btn.disabled=false; btn.textContent='Sign In ✦';
+  }
 }
 
 async function doSignup(){
@@ -125,15 +132,20 @@ async function doSignup(){
   const pass=document.getElementById('suPass').value;
   if(!name||!email||!pass){ showErr('Please fill all required fields.'); return; }
   if(pass.length<6){ showErr('Password must be at least 6 characters.'); return; }
+  const btn = document.querySelector('#signupPanel .auth-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
   try{
     const r = await fetch(API+'/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,password:pass})});
     const d = await r.json();
-    if(!r.ok){ showErr(d.message||'Signup failed.'); return; }
+    if(!r.ok){ showErr(d.error||d.message||'Signup failed.'); btn.disabled=false; btn.textContent='Create Account ✦'; return; }
     localStorage.setItem('ss_token', d.token);
     localStorage.setItem('ss_user', JSON.stringify(d.user));
     showOk('Account created! Welcome, '+d.user.name+'! Redirecting...');
     setTimeout(() => window.location.href='index.html', 1200);
-  }catch(e){ showErr('Cannot connect to server. Make sure it is running.'); }
+  }catch(e){
+    showErr('Cannot connect to server. Make sure it is running.');
+    btn.disabled=false; btn.textContent='Create Account ✦';
+  }
 }
 
 // Check if already logged in
