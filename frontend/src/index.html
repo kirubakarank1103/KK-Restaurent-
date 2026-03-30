@@ -27,7 +27,7 @@
   --r8:8px; --r12:12px; --r16:16px; --r22:22px; --r30:30px; --r50:50px;
   --tr: all 0.28s cubic-bezier(0.4,0,0.2,1);
 }
-*{margin:2;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;}
 img{display:block;}
@@ -36,20 +36,16 @@ button,a{font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;text-decorati
 ::-webkit-scrollbar-track{background:var(--bg2);}
 ::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px;}
 
-/* NOISE OVERLAY */
 body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;}
 
-/* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes slideUp{from{transform:translateY(36px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 @keyframes spin{to{transform:rotate(360deg);}}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
-@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 
-/* ── NAVBAR ── */
 .navbar{position:fixed;top:0;left:0;right:0;z-index:900;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:70px;transition:var(--tr);}
-.navbar.scrolled{background:rgba(255, 255, 255, 0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.4);}
+.navbar.scrolled{background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.4);}
 .nav-logo{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text);letter-spacing:1px;}
 .nav-logo em{color:var(--gold2);font-style:italic;}
 .nav-links{display:flex;align-items:center;gap:36px;}
@@ -63,10 +59,68 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .nav-user:hover{background:var(--gold2);}
 .nav-user-avatar{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;}
 
-/* ── HERO ── */
+/* ── PROFILE DROPDOWN ── */
+.profile-wrap{position:relative;}
+.profile-btn{display:flex;align-items:center;gap:8px;background:var(--gold);border:none;border-radius:var(--r50);padding:8px 18px;color:#000;font-size:12px;font-weight:800;letter-spacing:1px;transition:var(--tr);cursor:pointer;}
+.profile-btn:hover{background:var(--gold2);}
+.profile-avatar{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;}
+.profile-chevron{font-size:9px;transition:transform 0.2s;margin-left:2px;}
+.profile-wrap.open .profile-chevron{transform:rotate(180deg);}
+.profile-dropdown{display:none;position:absolute;top:calc(100% + 10px);right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r16);min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,0.3);overflow:hidden;z-index:1000;}
+.profile-wrap.open .profile-dropdown{display:block;animation:dropIn 0.22s ease;}
+.profile-info{padding:16px;border-bottom:1px solid var(--border);background:var(--bg3);}
+.profile-info-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.profile-info-email{font-size:11px;color:var(--text3);}
+.profile-menu-item{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--text2);font-size:12px;font-weight:600;transition:var(--tr);border:none;background:none;width:100%;text-align:left;cursor:pointer;}
+.profile-menu-item:hover{background:var(--bg3);color:var(--gold2);}
+.profile-menu-item .pmi-icon{width:28px;height:28px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.profile-menu-item:hover .pmi-icon{background:var(--gold-dim);}
+.profile-divider{height:1px;background:var(--border);margin:4px 0;}
+.profile-signout{color:var(--red) !important;}
+.profile-signout:hover{background:rgba(192,57,43,0.08) !important;color:var(--red) !important;}
+
+/* ── EDIT PROFILE MODAL ── */
+.edit-modal{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.7);backdrop-filter:blur(8px);z-index:9500;align-items:center;justify-content:center;}
+.edit-modal.show{display:flex;}
+.edit-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r22);width:100%;max-width:420px;overflow:hidden;animation:slideUp 0.32s ease;box-shadow:0 -8px 48px rgba(0,0,0,0.6);}
+.edit-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);}
+.edit-hd h3{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);}
+.edit-close{background:var(--bg3);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2);cursor:pointer;transition:var(--tr);}
+.edit-close:hover{background:var(--gold);color:#000;}
+.edit-body{padding:24px;}
+.edit-avatar-wrap{text-align:center;margin-bottom:24px;}
+.edit-avatar{width:72px;height:72px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#000;margin:0 auto 10px;}
+.edit-avatar-lbl{font-size:11px;color:var(--text3);letter-spacing:1px;}
+.edit-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.edit-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;}
+.edit-input{background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--r12);padding:12px 14px;color:var(--text);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:var(--tr);}
+.edit-input:focus{border-color:var(--gold2);}
+.edit-input::placeholder{color:var(--text3);}
+.edit-save{width:100%;background:var(--gold);border:none;border-radius:var(--r12);padding:14px;color:#000;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:4px;transition:var(--tr);cursor:pointer;}
+.edit-save:hover{background:var(--gold2);}
+
+/* ── MY ORDERS MODAL ── */
+.orders-modal{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.7);backdrop-filter:blur(8px);z-index:9500;align-items:flex-end;justify-content:center;}
+.orders-modal.show{display:flex;}
+.orders-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r30) var(--r30) 0 0;width:100%;max-width:540px;max-height:85vh;overflow-y:auto;animation:slideUp 0.32s ease;box-shadow:0 -8px 48px rgba(0,0,0,0.6);}
+.orders-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:2;}
+.orders-hd h3{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);}
+.orders-body{padding:16px 24px;}
+.order-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r16);padding:16px;margin-bottom:12px;}
+.order-card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.order-id{font-size:12px;font-weight:700;color:var(--gold2);}
+.order-date{font-size:10px;color:var(--text3);}
+.order-items{font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.6;}
+.order-footer{display:flex;justify-content:space-between;align-items:center;}
+.order-total{font-family:'DM Serif Display',serif;font-size:18px;color:var(--gold2);}
+.order-status{font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:var(--r50);}
+.status-pending{background:rgba(181,137,42,0.15);color:var(--gold2);}
+.status-confirmed{background:rgba(45,107,63,0.15);color:var(--green);}
+.status-delivered{background:rgba(45,107,63,0.2);color:var(--green);}
+.empty-orders{text-align:center;padding:40px 0;color:var(--text3);font-size:13px;}
+
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(181,137,42,0.08) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(181,137,42,0.04) 0%,transparent 60%),linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);}
-/* Decorative circles */
 .hero-ring{position:absolute;border-radius:50%;border:1px solid var(--border);pointer-events:none;}
 .hero-ring-1{width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 40s linear infinite;}
 .hero-ring-2{width:800px;height:800px;top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 60s linear infinite reverse;border-color:rgba(181,137,42,0.08);}
@@ -86,10 +140,7 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .hero-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.7s 0.7s both;}
 .hero-stat-num{font-family:'DM Serif Display',serif;font-size:38px;color:var(--gold2);line-height:1;}
 .hero-stat-lbl{font-size:9px;letter-spacing:3.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-top:4px;}
-.hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);font-size:9px;letter-spacing:3px;text-transform:uppercase;animation:fadeIn 1s 1.2s both;}
-.hero-scroll::after{content:'';width:1px;height:32px;background:linear-gradient(to bottom,var(--gold-dim),transparent);}
 
-/* ── SECTION COMMONS ── */
 .section{padding:96px 40px;}
 .section-inner{max-width:1140px;margin:0 auto;}
 .sec-eyebrow{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px;}
@@ -98,7 +149,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .gold-bar{width:40px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),transparent);border-radius:2px;margin-bottom:20px;}
 .sec-sub{font-size:14px;color:var(--text2);line-height:1.8;max-width:520px;}
 
-/* ── ABOUT ── */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
 .about-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .about-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r22);padding:24px;transition:var(--tr);}
@@ -112,7 +162,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .about-img-badge .num{font-family:'DM Serif Display',serif;font-size:32px;color:var(--gold2);}
 .about-img-badge .lbl{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;}
 
-/* ── MENU ── */
 .menu-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
 .filter-btn{background:transparent;border:1.5px solid var(--border);border-radius:var(--r50);padding:8px 20px;color:var(--text2);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:var(--tr);}
 .filter-btn:hover{border-color:var(--gold2);color:var(--gold2);}
@@ -143,7 +192,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .dish-add{background:var(--gold);border:none;border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#000;transition:var(--tr);}
 .dish-add:hover{background:var(--gold2);transform:scale(1.1);}
 
-/* ── RESERVATION ── */
 .reserve-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r30);padding:48px;max-width:680px;margin:0 auto;}
 .reserve-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
 .field-group{display:flex;flex-direction:column;gap:8px;}
@@ -155,7 +203,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .reserve-btn{width:100%;background:var(--gold);border:none;border-radius:var(--r16);padding:16px;color:#000;font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-top:8px;transition:var(--tr);}
 .reserve-btn:hover{background:var(--gold2);}
 
-/* ── GALLERY ── */
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,220px);gap:16px;}
 .gallery-item{border-radius:var(--r22);overflow:hidden;position:relative;cursor:pointer;}
 .gallery-item:first-child{grid-row:span 2;}
@@ -165,7 +212,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .gallery-item:hover .gallery-caption{opacity:1;}
 .gallery-caption span{font-family:'DM Serif Display',serif;font-size:16px;color:var(--gold2);}
 
-/* ── CART MODAL ── */
 .cart-modal{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.7);backdrop-filter:blur(8px);z-index:9000;align-items:flex-end;justify-content:center;}
 .cart-modal.show{display:flex;}
 .cart-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r30) var(--r30) 0 0;width:100%;max-width:540px;max-height:88vh;overflow-y:auto;animation:slideUp 0.32s ease;box-shadow:0 -8px 48px rgba(0,0,0,0.6);}
@@ -197,7 +243,6 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .place-btn{width:100%;background:var(--gold);border:none;border-radius:var(--r16);padding:16px;color:#000;font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-top:12px;transition:var(--tr);}
 .place-btn:hover{background:var(--gold2);}
 
-/* ── DISH POPUP ── */
 .dish-popup{display:none;position:fixed;inset:0;background:rgba(5,4,3,0.75);backdrop-filter:blur(8px);z-index:8000;align-items:flex-end;justify-content:center;}
 .dish-popup.show{display:flex;}
 .dish-popup-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r30) var(--r30) 0 0;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:slideUp 0.32s ease;}
@@ -218,11 +263,9 @@ body::before{content:'';position:fixed;inset:0;opacity:0.028;background-image:ur
 .dp-add-btn:hover{background:var(--gold2);}
 .dp-price-show{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;}
 
-/* ── TOAST ── */
 .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:11px 24px;border-radius:var(--r50);font-size:12px;font-weight:600;letter-spacing:0.5px;opacity:0;transition:all 0.26s;z-index:99999;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ── FOOTER ── */
 footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40px 32px;text-align:center;}
 .ft-logo{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:6px;}
 .ft-logo em{color:var(--gold2);font-style:italic;}
@@ -232,11 +275,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
 .ft-links a:hover{color:var(--gold2);}
 .ft-copy{font-size:10px;color:var(--text3);letter-spacing:1.5px;}
 
-/* ── SCROLL REVEAL ── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity 0.6s ease,transform 0.6s ease;}
 .reveal.shown{opacity:1;transform:translateY(0);}
 
-/* ── RESPONSIVE ── */
 @media(max-width:768px){
   .navbar{padding:0 20px;}
   .nav-links{display:none;}
@@ -246,6 +287,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   .gallery-item:first-child{grid-row:span 1;}
   .reserve-grid{grid-template-columns:1fr;}
   .hero-stats{gap:28px;}
+  .profile-dropdown{right:-10px;}
 }
 </style>
 </head>
@@ -253,7 +295,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
 
 <div class="toast" id="toast"></div>
 
-<!-- ── NAVBAR ── -->
+<!-- NAVBAR -->
 <nav class="navbar" id="navbar">
   <a href="#hero" class="nav-logo">Spice <em>&</em> Soul</a>
   <div class="nav-links">
@@ -271,7 +313,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </nav>
 
-<!-- ── HERO ── -->
+<!-- HERO -->
 <section class="hero" id="hero">
   <div class="hero-bg"></div>
   <div class="hero-dots"></div>
@@ -294,7 +336,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </section>
 
-<!-- ── ABOUT ── -->
+<!-- ABOUT -->
 <section class="section" id="about">
   <div class="section-inner">
     <div class="about-grid reveal">
@@ -321,7 +363,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </section>
 
-<!-- ── MENU ── -->
+<!-- MENU -->
 <section class="section" id="menu" style="padding-top:48px;">
   <div class="section-inner">
     <div class="reveal" style="text-align:center;margin-bottom:40px;">
@@ -342,7 +384,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </section>
 
-<!-- ── RESERVATION ── -->
+<!-- RESERVATION -->
 <section class="section" id="reserve" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
   <div class="section-inner">
     <div class="reveal" style="text-align:center;margin-bottom:40px;">
@@ -373,7 +415,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </section>
 
-<!-- ── GALLERY ── -->
+<!-- GALLERY -->
 <section class="section" id="gallery">
   <div class="section-inner">
     <div class="reveal" style="text-align:center;margin-bottom:40px;">
@@ -391,7 +433,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
+<!-- FOOTER -->
 <footer>
   <div class="ft-logo">Spice <em>&</em> Soul</div>
   <div class="ft-tag">Where Flavours Meet Soul</div>
@@ -404,7 +446,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   <div class="ft-copy">© 2025 SPICE & SOUL · ALL RIGHTS RESERVED</div>
 </footer>
 
-<!-- ── CART MODAL ── -->
+<!-- CART MODAL -->
 <div class="cart-modal" id="cartModal">
   <div class="cart-box">
     <div class="cart-hd">
@@ -427,7 +469,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </div>
 
-<!-- ── DISH POPUP ── -->
+<!-- DISH POPUP -->
 <div class="dish-popup" id="dishPopup">
   <div class="dish-popup-box">
     <div class="dp-img" id="dpImg">
@@ -451,34 +493,67 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 40p
   </div>
 </div>
 
+<!-- EDIT PROFILE MODAL -->
+<div class="edit-modal" id="editModal">
+  <div class="edit-box">
+    <div class="edit-hd">
+      <h3>Edit Profile</h3>
+      <button class="edit-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="edit-body">
+      <div class="edit-avatar-wrap">
+        <div class="edit-avatar" id="editAvatar">KI</div>
+        <div class="edit-avatar-lbl">Profile Photo</div>
+      </div>
+      <div class="edit-field">
+        <label class="edit-label">Full Name</label>
+        <input class="edit-input" type="text" id="editName" placeholder="Your full name">
+      </div>
+      <div class="edit-field">
+        <label class="edit-label">Email</label>
+        <input class="edit-input" type="email" id="editEmail" placeholder="your@email.com" disabled style="opacity:0.5;">
+      </div>
+      <div class="edit-field">
+        <label class="edit-label">Phone</label>
+        <input class="edit-input" type="tel" id="editPhone" placeholder="+91 98765 43210">
+      </div>
+      <button class="edit-save" onclick="saveProfile()">SAVE CHANGES ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- MY ORDERS MODAL -->
+<div class="orders-modal" id="ordersModal">
+  <div class="orders-box">
+    <div class="orders-hd">
+      <h3>My Orders</h3>
+      <button class="cart-close" onclick="closeOrdersModal()">✕</button>
+    </div>
+    <div class="orders-body" id="ordersBody"></div>
+  </div>
+</div>
+
 <script>
-// ── MENU DATA ──
 const DISHES = [
-  // INDIAN
   {id:1,name:'Royal Lamb Biryani',desc:'Aged basmati rice layered with slow-cooked lamb, saffron, caramelised onions & 22 royal spices.',price:520,oldPrice:650,cuisine:'indian',type:'nonveg',badge:'best',rating:5.0,img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80'},
   {id:2,name:'Tandoori Chicken',desc:'Juicy chicken marinated in yogurt & spices, cooked in a royal clay oven. Served with mint chutney.',price:349,oldPrice:420,cuisine:'indian',type:'nonveg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&q=80'},
   {id:3,name:'Paneer Butter Masala',desc:'Soft paneer cubes in rich tomato-cream gravy with aromatic spice blend.',price:319,cuisine:'indian',type:'veg',badge:'special',rating:4.7,img:'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&q=80'},
   {id:4,name:'Dal Makhani Royal',desc:'Black lentils slow-cooked overnight with cream & butter. The ultimate comfort dal.',price:349,cuisine:'indian',type:'veg',badge:'best',rating:4.6,img:'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=500&q=80'},
   {id:5,name:'Mutton Rogan Josh',desc:'Kashmiri-style tender mutton in aromatic whole spice gravy. A timeless royal recipe.',price:499,cuisine:'indian',type:'nonveg',rating:4.8,img:'https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=500&q=80'},
   {id:6,name:'Paneer Tikka',desc:'Cottage cheese cubes chargrilled with bell peppers, marinated in house spice blend.',price:299,cuisine:'indian',type:'veg',badge:'new',rating:4.5,img:'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500&q=80'},
-  // ITALIAN
   {id:7,name:'Truffle Mushroom Pasta',desc:'Handmade tagliatelle with wild mushrooms, truffle oil & aged parmesan. Pure luxury.',price:449,cuisine:'italian',type:'veg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=500&q=80'},
   {id:8,name:'Margherita Napoletana',desc:'Classic Neapolitan pizza with San Marzano tomatoes, fresh mozzarella & basil.',price:349,cuisine:'italian',type:'veg',rating:4.5,img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80'},
   {id:9,name:'Risotto ai Frutti di Mare',desc:'Creamy arborio rice with prawns, scallops & mussels in a white wine bisque.',price:549,cuisine:'italian',type:'nonveg',badge:'special',rating:4.8,img:'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=500&q=80'},
-  // JAPANESE
   {id:10,name:'Premium Sashimi Platter',desc:'Chef\'s selection of 12 pieces — salmon, tuna, yellowtail & sea bream.',price:899,cuisine:'japanese',type:'nonveg',badge:'best',rating:5.0,img:'https://images.unsplash.com/photo-1582450871972-ab5ca641643d?w=500&q=80'},
   {id:11,name:'Wagyu Ramen',desc:'48-hour tonkotsu broth with A5 wagyu, soft egg, bamboo shoots & nori.',price:699,cuisine:'japanese',type:'nonveg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&q=80'},
   {id:12,name:'Dragon Roll',desc:'Crispy tempura prawn roll topped with avocado, tobiko & spicy mayo.',price:449,cuisine:'japanese',type:'nonveg',badge:'new',rating:4.7,img:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=500&q=80'},
-  // AMERICAN
   {id:13,name:'Black Angus Burger',desc:'200g Black Angus patty, aged cheddar, caramelised onions & truffle aioli in a brioche bun.',price:549,cuisine:'american',type:'nonveg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80'},
   {id:14,name:'Smoky BBQ Ribs',desc:'Slow-smoked pork ribs with house-made bourbon BBQ glaze. Fall-off-the-bone tender.',price:799,cuisine:'american',type:'nonveg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80'},
-  // CHINESE
   {id:15,name:'Peking Duck',desc:'Crispy skin Peking duck with mandarin pancakes, scallions & hoisin sauce.',price:899,cuisine:'chinese',type:'nonveg',badge:'special',rating:4.9,img:'https://images.unsplash.com/photo-1534422298391-e4f8317fef46?w=500&q=80'},
   {id:16,name:'Dim Sum Basket',desc:'Steamed har gow, siu mai & crystal dumplings with soy & chilli dips.',price:349,cuisine:'chinese',type:'nonveg',badge:'new',rating:4.6,img:'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&q=80'},
-  // DRINKS
-  {id:17,name:'Mango Lassi',desc:'Alphonso mango blended with creamy yogurt, saffron & cardamom. Thick, chilled & divine.',price:179,cuisine:'drinks',type:'veg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1571805529673-0f56b922b359?w=500&q=80'},
-  {id:18,name:'Kashmiri Kahwa',desc:'Traditional Kashmiri green tea with saffron, cinnamon & almonds. A royal brew.',price:129,cuisine:'drinks',type:'veg',badge:'special',rating:4.8,img:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'},
-  {id:19,name:'Virgin Mojito',desc:'Fresh mint, lime, sugar syrup & soda over crushed ice. Cool, crisp & refreshing.',price:153,cuisine:'drinks',type:'veg',rating:4.5,img:'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=500&q=80'},
+  {id:17,name:'Mango Lassi',desc:'Alphonso mango blended with creamy yogurt, saffron & cardamom.',price:179,cuisine:'drinks',type:'veg',badge:'best',rating:4.8,img:'https://images.unsplash.com/photo-1571805529673-0f56b922b359?w=500&q=80'},
+  {id:18,name:'Kashmiri Kahwa',desc:'Traditional Kashmiri green tea with saffron, cinnamon & almonds.',price:129,cuisine:'drinks',type:'veg',badge:'special',rating:4.8,img:'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'},
+  {id:19,name:'Virgin Mojito',desc:'Fresh mint, lime, sugar syrup & soda over crushed ice.',price:153,cuisine:'drinks',type:'veg',rating:4.5,img:'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=500&q=80'},
   {id:20,name:'Gulab Jamun Royale',desc:'Soft khoya dumplings soaked in rose-scented sugar syrup. Served warm with vanilla ice cream.',price:199,cuisine:'indian',type:'veg',badge:'best',rating:4.9,img:'https://images.unsplash.com/photo-1666361900831-d873b5a94193?w=500&q=80'},
 ];
 
@@ -486,31 +561,164 @@ let cart = {};
 let currentDish = null;
 const API = 'https://kk-restaurent-backend.onrender.com/api';
 
-// ── AUTH ──
 function getToken(){ return localStorage.getItem('ss_token'); }
 function getUser(){ try{ return JSON.parse(localStorage.getItem('ss_user')); }catch(e){ return null; } }
+
+// ── PROFILE DROPDOWN ──
 function buildNavUser(){
   const wrap = document.getElementById('navUserWrap');
   const user = getUser();
   if(user){
-    wrap.innerHTML = `<button class="nav-user"><div class="nav-user-avatar">${user.name.slice(0,2).toUpperCase()}</div>${user.name.split(' ')[0]}</button>`;
+    const initials = user.name.slice(0,2).toUpperCase();
+    const firstName = user.name.split(' ')[0];
+    wrap.innerHTML = `
+      <div class="profile-wrap" id="profileWrap">
+        <button class="profile-btn" onclick="toggleProfileDropdown()">
+          <div class="profile-avatar">${initials}</div>
+          ${firstName}
+          <span class="profile-chevron">▼</span>
+        </button>
+        <div class="profile-dropdown">
+          <div class="profile-info">
+            <div class="profile-info-name">${user.name}</div>
+            <div class="profile-info-email">${user.email}</div>
+          </div>
+          <button class="profile-menu-item" onclick="openEditModal()">
+            <div class="pmi-icon">✏️</div> Edit Profile
+          </button>
+          <button class="profile-menu-item" onclick="openOrdersModal()">
+            <div class="pmi-icon">📋</div> My Orders
+          </button>
+          <button class="profile-menu-item" onclick="openReservationsModal()">
+            <div class="pmi-icon">📅</div> My Reservations
+          </button>
+          <div class="profile-divider"></div>
+          <button class="profile-menu-item profile-signout" onclick="signOut()">
+            <div class="pmi-icon">🚪</div> Sign Out
+          </button>
+        </div>
+      </div>`;
   } else {
     wrap.innerHTML = `<a href="auth.html" class="nav-user">Sign In</a>`;
   }
 }
 
-// ── NAVBAR SCROLL ──
+function toggleProfileDropdown(){
+  const wrap = document.getElementById('profileWrap');
+  if(wrap) wrap.classList.toggle('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('profileWrap');
+  if(wrap && !wrap.contains(e.target)) wrap.classList.remove('open');
+});
+
+function signOut(){
+  localStorage.removeItem('ss_token');
+  localStorage.removeItem('ss_user');
+  showToast('Signed out successfully! 👋');
+  setTimeout(() => { buildNavUser(); }, 500);
+}
+
+// ── EDIT PROFILE ──
+function openEditModal(){
+  const wrap = document.getElementById('profileWrap');
+  if(wrap) wrap.classList.remove('open');
+  const user = getUser();
+  if(!user) return;
+  document.getElementById('editAvatar').textContent = user.name.slice(0,2).toUpperCase();
+  document.getElementById('editName').value = user.name || '';
+  document.getElementById('editEmail').value = user.email || '';
+  document.getElementById('editPhone').value = user.phone || '';
+  document.getElementById('editModal').classList.add('show');
+}
+function closeEditModal(){
+  document.getElementById('editModal').classList.remove('show');
+}
+function saveProfile(){
+  const user = getUser();
+  if(!user) return;
+  const newName = document.getElementById('editName').value.trim();
+  const newPhone = document.getElementById('editPhone').value.trim();
+  if(!newName){ showToast('Name cannot be empty!'); return; }
+  user.name = newName;
+  user.phone = newPhone;
+  localStorage.setItem('ss_user', JSON.stringify(user));
+  closeEditModal();
+  buildNavUser();
+  showToast('Profile updated successfully! ✦');
+}
+
+// ── MY ORDERS ──
+async function openOrdersModal(){
+  const wrap = document.getElementById('profileWrap');
+  if(wrap) wrap.classList.remove('open');
+  document.getElementById('ordersModal').classList.add('show');
+  const body = document.getElementById('ordersBody');
+  body.innerHTML = '<div class="empty-orders">⏳ Loading orders...</div>';
+  const token = getToken();
+  if(!token){ body.innerHTML = '<div class="empty-orders">Please sign in to view orders</div>'; return; }
+  try{
+    const res = await fetch(API+'/orders',{headers:{'Authorization':'Bearer '+token}});
+    const orders = await res.json();
+    if(!orders.length){ body.innerHTML = '<div class="empty-orders">🍽️ No orders yet!<br><small>Place your first order from our menu.</small></div>'; return; }
+    body.innerHTML = orders.map(o => `
+      <div class="order-card">
+        <div class="order-card-hd">
+          <span class="order-id">${o.id}</span>
+          <span class="order-date">${new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</span>
+        </div>
+        <div class="order-items">${o.items.map(i => `${i.name} ×${i.qty}`).join(' · ')}</div>
+        <div class="order-footer">
+          <span class="order-total">₹${o.total}</span>
+          <span class="order-status status-${o.status.toLowerCase()}">${o.status}</span>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    body.innerHTML = '<div class="empty-orders">Could not load orders. Try again!</div>';
+  }
+}
+function closeOrdersModal(){ document.getElementById('ordersModal').classList.remove('show'); }
+
+async function openReservationsModal(){
+  const wrap = document.getElementById('profileWrap');
+  if(wrap) wrap.classList.remove('open');
+  document.getElementById('ordersModal').classList.add('show');
+  const body = document.getElementById('ordersBody');
+  body.innerHTML = '<div class="empty-orders">⏳ Loading reservations...</div>';
+  const token = getToken();
+  if(!token){ body.innerHTML = '<div class="empty-orders">Please sign in to view reservations</div>'; return; }
+  try{
+    const res = await fetch(API+'/reservations',{headers:{'Authorization':'Bearer '+token}});
+    const list = await res.json();
+    if(!list.length){ body.innerHTML = '<div class="empty-orders">📅 No reservations yet!</div>'; return; }
+    body.innerHTML = list.map(r => `
+      <div class="order-card">
+        <div class="order-card-hd">
+          <span class="order-id">${r.id}</span>
+          <span class="order-date">${r.date}</span>
+        </div>
+        <div class="order-items">${r.time} · ${r.guests} · ${r.occasion}</div>
+        <div class="order-footer">
+          <span class="order-total" style="font-size:14px">${r.name}</span>
+          <span class="order-status status-confirmed">${r.status}</span>
+        </div>
+      </div>`).join('');
+  }catch(e){
+    body.innerHTML = '<div class="empty-orders">Could not load reservations. Try again!</div>';
+  }
+}
+
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
 });
 
-// ── REVEAL ──
 const revObs = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('shown'); });
 }, {threshold:0.08});
 document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
 
-// ── BUILD MENU ──
 function buildMenu(dishes){
   const grid = document.getElementById('menuGrid');
   grid.innerHTML = '';
@@ -520,7 +728,6 @@ function buildMenu(dishes){
     const old = d.oldPrice ? `<span class="dish-price-old">₹${d.oldPrice}</span>` : '';
     const card = document.createElement('div');
     card.className = 'dish-card';
-    card.dataset.cuisine = d.cuisine;
     card.innerHTML = `
       <div class="dish-img">
         <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.style.display='none'">
@@ -546,13 +753,7 @@ function buildMenu(dishes){
 function filterMenu(cuisine, btn){
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const filtered = cuisine === 'all' ? DISHES : DISHES.filter(d => d.cuisine === cuisine);
-  buildMenu(filtered);
-  // re-observe new cards
-  document.querySelectorAll('.dish-card').forEach((c,i) => {
-    c.style.animationDelay = (i*0.04) + 's';
-    c.style.animation = 'fadeUp 0.5s both';
-  });
+  buildMenu(cuisine === 'all' ? DISHES : DISHES.filter(d => d.cuisine === cuisine));
 }
 
 function quickAdd(id){
@@ -562,7 +763,6 @@ function quickAdd(id){
   showToast(`${d.name} added to cart! 🛒`);
 }
 
-// ── DISH POPUP ──
 function openDish(d){
   currentDish = d;
   const dpImg = document.getElementById('dpImg');
@@ -606,7 +806,6 @@ function addFromPopup(){
   refreshDishBtn();
 }
 
-// ── CART ──
 function addToCart(d){
   if(cart[d.id]) cart[d.id].qty++;
   else cart[d.id] = {...d, qty:1};
@@ -668,7 +867,6 @@ async function placeOrder(){
   cart = {}; updateCartUI();
 }
 
-// ── RESERVATION ──
 async function submitReservation(){
   const name = document.getElementById('rName').value.trim();
   const email = document.getElementById('rEmail').value.trim();
@@ -685,20 +883,18 @@ async function submitReservation(){
   document.getElementById('rName').value=''; document.getElementById('rEmail').value=''; document.getElementById('rDate').value='';
 }
 
-// ── TOAST ──
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// ── INIT ──
 buildMenu(DISHES);
 buildNavUser();
-// Close modals on backdrop
 document.getElementById('cartModal').addEventListener('click', e => { if(e.target===document.getElementById('cartModal')) closeCart(); });
 document.getElementById('dishPopup').addEventListener('click', e => { if(e.target===document.getElementById('dishPopup')) closeDishPopup(); });
-// Reveal new elements
+document.getElementById('editModal').addEventListener('click', e => { if(e.target===document.getElementById('editModal')) closeEditModal(); });
+document.getElementById('ordersModal').addEventListener('click', e => { if(e.target===document.getElementById('ordersModal')) closeOrdersModal(); });
 setTimeout(() => { document.querySelectorAll('.reveal').forEach(el => revObs.observe(el)); }, 100);
 </script>
 </body>
